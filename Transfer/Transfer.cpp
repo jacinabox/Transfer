@@ -28,6 +28,8 @@ bool predicate(const int& x) {
 	return x == 32; //Test for space character.
 }
 
+char incr(const char& c) { return c + 1; }
+
 template<typename I, typename O> auto_ptr<Transfer<I, O> > make_auto_ptr
 (Transfer<I, O>* x) {
 
@@ -56,7 +58,7 @@ int main()
 
 	//The transfer interface uses operator overloading; please see the code of splitting in
 	//Miscellaneous.h for example.
-	auto_ptr<Transfer<char, list<char> > > transfer(splitting(n, f));
+	auto_ptr<Transfer<char, list<char> > > transfer(/* *map(n, n, incr) >> */splitting(n, f));
 	//std::auto_ptr<Transfer<int, int> > ptr;
 	//std::function<std::auto_ptr<Transfer<int, int> >()> f3(std::bind(identity__<std::auto_ptr<Transfer<int, int> > >,
 //		ptr));

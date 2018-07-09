@@ -53,4 +53,10 @@ template<class X> void cout_list(const std::list<X>& ls) {
 	}
 }
 
+template<class I, class O, class FUNCTIONAL> Transfer<I, O>* map(const I& type_determiner, O& type_determiner2, FUNCTIONAL& f) {
+	std::function<O(const O&, const I&)> f2(std::bind(f, _2));
+
+	return scanning(type_determiner, type_determiner2, f2);
+}
+
 #endif
