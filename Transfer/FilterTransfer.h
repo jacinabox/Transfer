@@ -25,8 +25,11 @@ public:
 
 		}
 
-		return std::auto_ptr<Transfer<I, I> >(new FilterTransfer<I, I_PREDICATE>(predicate));
+		return std::auto_ptr<Transfer<I, I> >(const_cast<FilterTransfer<I, I_PREDICATE>*>(this));
 
+	}
+	virtual Transfer<I, I>* clone() const {
+		return new FilterTransfer<I, I_PREDICATE>(predicate);
 	}
 };
 

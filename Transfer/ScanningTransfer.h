@@ -9,9 +9,12 @@ template<class I, class  T, class T_I_FUNCTION> class ScanningTransfer :
 protected:
 	T itl;
 	T_I_FUNCTION f;
+	bool stateless;
 
 public:
-	ScanningTransfer(T& _itl, const T_I_FUNCTION& _f) : itl(_itl), f(_f) {
+	//Boolean variable indicates whether or not this scan is being used as a map,
+	//in which case it is stateless.
+	ScanningTransfer(const T& _itl, const T_I_FUNCTION& _f, bool _stateless=false) : itl(_itl), f(_f), stateless(_stateless) {
 	}
 	virtual ~ScanningTransfer() {
 	}
@@ -20,13 +23,19 @@ public:
 		sink(itl2);
 		return std::auto_ptr<Transfer<I, T> > (new ScanningTransfer(itl2, f));
 	}
+	virtual bool is_stateless() const {
+		return stateless;
+	}
+	virtual Transfer<I, T>* clone() const {
+		return new ScanningTransfer<I, T, T_I_FUNCTION>(itl, f, stateless);
+	}
 };
 
 
 ///////////////////////////////////////////
 
-template<class I, class T, class T_I_FUNCTION> Transfer<I, T>* scanning(const I& _type_determiner, T& _itl, T_I_FUNCTION& _f) {
-	return new ScanningTransfer<I, T, T_I_FUNCTION>(_itl, _f);
+template<class I, class T, class T_I_FUNCTION> Transfer<I, T>* scanning(const I& _type_determiner, const T& _itl, T_I_FUNCTION& _f, bool _stateless = false) {
+	return new ScanningTransfer<I, T, T_I_FUNCTION>(_itl, _f, _stateless);
 }
 
 #endif

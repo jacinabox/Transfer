@@ -36,6 +36,12 @@ public:
 
 		return std::auto_ptr<Transfer<I, O> >(new LazyTransfer(tf2));
 	}
+	virtual bool is_stateless() const {
+		return false;
+	}
+	virtual Transfer<I, O>* clone() const {
+		return new LazyTransfer<I, O> (tf);
+	}
 };
 
 /////////////////////////////////////

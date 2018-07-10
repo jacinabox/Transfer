@@ -11,8 +11,7 @@ using namespace std::placeholders;
 template<class O1, class O2> void helper(std::auto_ptr<Transfer<O1, O2> >* new_transfer,
 	std::function<void(const O2&)>& sink,
 	const O1& o1) {
-	*new_transfer = (*new_transfer)->transduce(o1, sink);
-	
+	ptr_assignment_helper(*new_transfer, *new_transfer, (*new_transfer)->transduce(o1, sink));
 	
 }
 
@@ -64,24 +63,41 @@ public:
 		std::function<void(const O1&)> f(std::bind(helper<O1, O2>, &transfer2, sink, _1));
 
 		//Process the input.
-		new_transfer1 = transfer1->transduce(input, f);
+		ptr_assignment_helper(new_transfer1, transfer1, transfer1->transduce(input, f));
 
 
 		//Reconstruct a succeeding transfer.
 		return std::auto_ptr<Transfer<I, O2> >(new ComposeTransfer(new_transfer1, transfer2));
+	}
+
+	virtual bool is_stateless() const {
+		return false;
+	}
+
+	virtual Transfer<I, O2>* clone() const {
+		return new ComposeTransfer<I, O1, O2>(std::auto_ptr<Transfer<I, O1> >(transfer1->clone()),
+			transfer2);
 	}
 };
 
 /////////////////////////////////////
 
 template<class I, class O1, class O2> Transfer<I, O2>*
-	operator >>(Transfer<I, O1>& _transfer1,
+operator >>(Transfer<I, O1>& _transfer1,
 	Transfer<O1, O2>* _transfer2) {
 
-	//Constructor wrapper.
+	//Constructor wrapper - also selects an appropriate implementation based on whether
+	//or not the component transfers are stateless.
 
-	return new ComposeTransfer<I, O1, O2>(std::auto_ptr<Transfer<I, O1> >(&_transfer1), 
-		std::auto_ptr<Transfer<O1, O2> >(_transfer2));
+	if (false) {//_transfer1.is_stateless() && _transfer2->is_stateless()) {
+		//Then use the more efficient version.
+		return new StatelessComposeTransfer<I, O1, O2>(std::auto_ptr<Transfer<I, O1> >(&_transfer1),
+			std::auto_ptr<Transfer<O1, O2> >(_transfer2));
+	}
+	else {
+		return new ComposeTransfer<I, O1, O2>(std::auto_ptr<Transfer<I, O1> >(&_transfer1),
+				std::auto_ptr<Transfer<O1, O2> >(_transfer2));
+	}
 }
 
 #endif

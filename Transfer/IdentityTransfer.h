@@ -13,7 +13,10 @@ public:
 	virtual std::auto_ptr<Transfer<X, X> > transduce(const X& input,
 		std::function<void(const X&)>& sink) const {
 		sink(input);
-		return std::auto_ptr<Transfer<X, X> >(new IdentityTransfer());
+		return std::auto_ptr<Transfer<X, X> >(const_cast<Transfer<X, X>*>(this));
+	}
+	virtual Transfer<X, X>* clone() const {
+		return new IdentityTransfer<X>();
 	}
 };
 

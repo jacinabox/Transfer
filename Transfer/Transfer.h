@@ -11,6 +11,9 @@ typedef int Nothing;
 
 template<class I, class O> class Transfer {
 public:
+	Transfer() {
+	}
+
 	virtual ~Transfer() {
 	}
 
@@ -19,7 +22,18 @@ public:
 	//absolutely has to modify its state internally, will end up being marked mutable.
 	virtual std::auto_ptr<Transfer<I, O> > transduce(const I& input,
 		std::function<void(const O&)>& sink) const {
-		return std::auto_ptr<Transfer<I, O> >(0);
+		return std::auto_ptr<Transfer<I, O> >(const_cast<Transfer<I, O>*>(this));
+	}
+
+	//Indicates whether the transfer type returns a null pointer or whether it
+	//reconstructs itself. This information is used to optimize.
+	virtual bool is_stateless() const {
+		return true;
+	}
+
+	//The clone method must implement copy semantics.
+	virtual Transfer<I, O>* clone() const {
+		return new Transfer<I, O>();
 	}
 
 	static void transduce_loop(std::function<I()>& generator,
@@ -73,8 +87,20 @@ public:
 	virtual std::auto_ptr<Transfer<int, int> > transduce(const int& input,
 		std::function<void(const int&)>& sink) const {
 		sink( 1 + input);
-		return std::auto_ptr<Transfer<int, int> >(new ExampleTransfer());
+		return std::auto_ptr<Transfer<int, int> >(const_cast<ExampleTransfer*>(this));
 	}
 };
+
+////////////////////////////////////
+
+template<class I, class O> void ptr_assignment_helper(std::auto_ptr<Transfer<I, O> >& ptr, const std::auto_ptr<Transfer<I, O> >& ptr2, std::auto_ptr<Transfer<I, O> > ptr3) {
+	if (ptr2.get() == ptr3.get()) {
+		ptr.release();
+		ptr.reset(ptr3->clone());
+	}
+	else {
+		ptr = ptr3;
+	}
+}
 
 #endif

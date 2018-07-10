@@ -47,7 +47,7 @@ template<class T, class U> U* retrieve_right_data(Sum<T, U>& sum) {
 
 #define SWITCH_INPUT(I, O) Sum<std::auto_ptr<Transfer<I, O> >, I>
 
-template<class I, class O> class SwitchingTransfer : public Transfer<SWITCH_INPUT(I, O), O>{
+template<class I, class O> class SwitchingTransfer : public Transfer<SWITCH_INPUT(I, O), O> {
 protected:
 	std::auto_ptr<Transfer<I, O> > transfer;
 
@@ -76,6 +76,12 @@ public:
 			transfer2 = *left_data;
 		}
 		return std::auto_ptr<Transfer<SWITCH_INPUT(I, O), O> >(new SwitchingTransfer(transfer2));
+	}
+	virtual bool is_stateless() const {
+		return false;
+	}
+	virtual Transfer<SWITCH_INPUT(I, O), O>* clone() const {
+		return new SwitchingTransfer(transfer.clone());
 	}
 };
 

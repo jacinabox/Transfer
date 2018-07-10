@@ -51,6 +51,12 @@
     <ClInclude Include="LazyTransfer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StatelessComposeTransfer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StatelessMergeTransfer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

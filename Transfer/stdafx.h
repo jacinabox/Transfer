@@ -13,11 +13,13 @@
 
 
 #include "Transfer.h"
+#include "StatelessComposeTransfer.h"
 #include "ComposeTransfer.h"
 #include "IdentityTransfer.h"
 #include "ScanningTransfer.h"
 #include "SwitchingTransfer.h"
 #include "FilterTransfer.h"
+#include "StatelessMergeTransfer.h"
 #include "MergeTransfer.h"
 #include "LazyTransfer.h"
 #include "Miscellaneous.h"
