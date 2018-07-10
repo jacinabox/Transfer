@@ -66,7 +66,7 @@ int main()
 		first_with(map(n, list<char>(2, 'a'),
 		std::bind(const__<list<char>, char >, std::list<char>(), _1)),
 
-		splitting(n, f))
+		identity_<char>() >> identity_<char>() >> splitting(n, f))
 	);
 
 	//std::auto_ptr<Transfer<int, int> > ptr;

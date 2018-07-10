@@ -90,6 +90,15 @@ operator >>(Transfer<I, O1>& _transfer1,
 	//Constructor wrapper - also selects an appropriate implementation based on whether
 	//or not the component transfers are stateless.
 
+	//Let's explicitly rewrite the transfer to elide the identity components....
+	if (dynamic_cast<IdentityTransfer<I>*>(&_transfer1)) {
+		//If this was Haskell, the pattern match would generate type equality-evidence validating
+		//the coercion. This ain't Haskell.
+		return dynamic_cast<Transfer<I, O2>&>(_transfer2);
+	} else if (dynamic_cast<IdentityTransfer<O1>*>(&_transfer2)) {
+		return dynamic_cast<Transfer<I, O2>&>(_transfer1);
+	}
+
 	if (_transfer1.is_stateless() && _transfer2.is_stateless()) {
 		//Then use the more efficient version.
 		return *new StatelessComposeTransfer<I, O1, O2>(std::auto_ptr<Transfer<I, O1> >(&_transfer1),
