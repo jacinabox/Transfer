@@ -25,7 +25,7 @@ public:
 
 		}
 
-		return std::auto_ptr<Transfer<I, I> >(const_cast<FilterTransfer<I, I_PREDICATE>*>(this));
+		return std::auto_ptr<Transfer<I, I> >(0);
 
 	}
 	virtual Transfer<I, I>* clone() const {

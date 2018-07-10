@@ -68,7 +68,8 @@ public:
 
 		right_data = retrieve_right_data(input);
 		if (right_data) {
-			transfer2 = transfer->transduce(*right_data, sink);
+			transfer2 =  transfer->transduce(*right_data, sink));
+			if (!transfer2.get()) transfer2.reset(transfer->clone());
 		}
 		else {
 			left_data = retrieve_left_data(input);

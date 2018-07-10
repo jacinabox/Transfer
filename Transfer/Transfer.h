@@ -5,6 +5,7 @@
 // #include <list>
 #include <functional>
 #include <memory>
+#include <assert.h>
 //#include <iostream>
 
 typedef int Nothing;
@@ -22,10 +23,12 @@ public:
 	//absolutely has to modify its state internally, will end up being marked mutable.
 	//
 	//The caller must take ownership of the transfer pointer returned, except when the
-	//pointer returned is equal to the this pointer of the method call.
+	//pointer returned is null. When the pointer returned is null, this indicates that
+	//the calling object can continue to use the transfer object it already has, and
+	//just called.
 	virtual std::auto_ptr<Transfer<I, O> > transduce(const I& input,
 		std::function<void(const O&)>& sink) const {
-		return std::auto_ptr<Transfer<I, O> >(const_cast<Transfer<I, O>*>(this));
+		return std::auto_ptr<Transfer<I, O> >(0);
 	}
 
 	//Indicates whether the transfer type returns a null pointer or whether it
@@ -44,14 +47,14 @@ public:
 		std::function<void(const O&)>& sink) {
 		while (true) {
 			I input = generator();
-			transfer = transfer->transduce(input, sink);
+			ptr_assignment_helper(transfer, transfer, transfer->transduce(input, sink));
 		}
 	}
 };
 /*
-//When transfers appear in their capacity as sinks (telltale is a Nothing
-//output) they are not expected to behave as transfers usually behave,
-//return sensible successor transfers, etc.
+
+
+
 
 template<class I> class SinkTransfer : public Transfer<I, Nothing> {
 protected:
@@ -96,14 +99,8 @@ public:
 
 ////////////////////////////////////
 
-template<class I, class O> void ptr_assignment_helper(std::auto_ptr<Transfer<I, O> >& ptr, const std::auto_ptr<Transfer<I, O> >& ptr2, std::auto_ptr<Transfer<I, O> > ptr3) {
-	if (ptr2.get() == ptr3.get()) {
-		ptr.release();
-		ptr.reset(ptr3->clone());
-	}
-	else {
-		ptr = ptr3;
-	}
+template<class I, class O> void ptr_assignment_helper(std::auto_ptr<Transfer<I, O> >& ptr, std::auto_ptr<Transfer<I, O> >& ptr2, std::auto_ptr<Transfer<I, O> > ptr3) {
+	ptr.reset(ptr3.get() ? ptr3.release() : ptr2->clone());
 }
 
 #endif

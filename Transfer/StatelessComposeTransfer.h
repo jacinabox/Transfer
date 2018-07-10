@@ -7,7 +7,7 @@
 
 template<class I, class O1, class O2> class StatelessComposeTransfer : public Transfer<I, O2> {
 protected:
-	mutable std::auto_ptr<Transfer<I, O1> > transfer1;
+	std::auto_ptr<Transfer<I, O1> > transfer1;
 	mutable std::auto_ptr<Transfer<O1, O2> > transfer2;
 
 public:
@@ -36,17 +36,22 @@ public:
 		std::function<void(const O1&)> f(std::bind(helper<O1, O2>, &transfer2, sink, _1));
 
 		
-		transfer1 = transfer1->transduce(input, f);
+		transfer1->transduce(input, f);
 
 
-		return std::auto_ptr<Transfer<I, O2> >(const_cast<StatelessComposeTransfer<I, O1, O2>*>(this));
+		return std::auto_ptr<Transfer<I, O2> >(0);
 	}
 	//StatelessComposeTransfers are always assumed to be stateless because I
 	//only construct transfers using it, when the component transfers are
 	//known to be stateless.
 	virtual Transfer<I, O2>* clone() const {
+		Transfer<O1, O2>* transfer2_ = transfer2.release();
+
+
+		transfer2.reset(new Transfer<O1, O2>());
+
 		return new StatelessComposeTransfer<I, O1, O2>(std::auto_ptr<Transfer<I, O1> >(transfer1->clone()),
-			std::auto_ptr<Transfer<O1, O2> >(transfer2->clone()));
+			std::auto_ptr<Transfer<O1, O2> >(transfer2_));
 	}
 };
 
