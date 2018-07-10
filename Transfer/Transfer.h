@@ -20,6 +20,9 @@ public:
 	//A transfer effectively cannot modify itself (because transduce is const), so it has
 	//to prepare a representation with its new state. Places where a transfer object
 	//absolutely has to modify its state internally, will end up being marked mutable.
+	//
+	//The caller must take ownership of the transfer pointer returned, except when the
+	//pointer returned is equal to the this pointer of the method call.
 	virtual std::auto_ptr<Transfer<I, O> > transduce(const I& input,
 		std::function<void(const O&)>& sink) const {
 		return std::auto_ptr<Transfer<I, O> >(const_cast<Transfer<I, O>*>(this));
