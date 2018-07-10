@@ -22,6 +22,7 @@
 #include "StatelessMergeTransfer.h"
 #include "MergeTransfer.h"
 #include "LazyTransfer.h"
+#include "FirstWithTransfer.h"
 #include "Miscellaneous.h"
 #include <memory>
 #include <functional>

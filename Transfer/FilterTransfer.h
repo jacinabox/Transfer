@@ -35,8 +35,8 @@ public:
 
 /////////////////////////////////////////
 
-template<class I, class I_PREDICATE> Transfer<I, I>* filter(const I& type_determiner, I_PREDICATE& predicate) {
-	return new FilterTransfer<I, I_PREDICATE> (predicate);
+template<class I, class I_PREDICATE> Transfer<I, I>& filter(const I& type_determiner, I_PREDICATE& predicate) {
+	return *new FilterTransfer<I, I_PREDICATE> (predicate);
 }
 
 #endif

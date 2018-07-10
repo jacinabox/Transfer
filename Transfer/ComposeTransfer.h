@@ -83,21 +83,21 @@ public:
 
 /////////////////////////////////////
 
-template<class I, class O1, class O2> Transfer<I, O2>*
+template<class I, class O1, class O2> Transfer<I, O2>&
 operator >>(Transfer<I, O1>& _transfer1,
-	Transfer<O1, O2>* _transfer2) {
+	Transfer<O1, O2>& _transfer2) {
 
 	//Constructor wrapper - also selects an appropriate implementation based on whether
 	//or not the component transfers are stateless.
 
-	if (_transfer1.is_stateless() && _transfer2->is_stateless()) {
+	if (_transfer1.is_stateless() && _transfer2.is_stateless()) {
 		//Then use the more efficient version.
-		return new StatelessComposeTransfer<I, O1, O2>(std::auto_ptr<Transfer<I, O1> >(&_transfer1),
-			std::auto_ptr<Transfer<O1, O2> >(_transfer2));
+		return *new StatelessComposeTransfer<I, O1, O2>(std::auto_ptr<Transfer<I, O1> >(&_transfer1),
+			std::auto_ptr<Transfer<O1, O2> >(&_transfer2));
 	}
 	else {
-		return new ComposeTransfer<I, O1, O2>(std::auto_ptr<Transfer<I, O1> >(&_transfer1),
-				std::auto_ptr<Transfer<O1, O2> >(_transfer2));
+		return *new ComposeTransfer<I, O1, O2>(std::auto_ptr<Transfer<I, O1> >(&_transfer1),
+				std::auto_ptr<Transfer<O1, O2> >(&_transfer2));
 	}
 }
 

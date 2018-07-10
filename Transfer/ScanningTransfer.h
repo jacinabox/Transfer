@@ -34,8 +34,8 @@ public:
 
 ///////////////////////////////////////////
 
-template<class I, class T, class T_I_FUNCTION> Transfer<I, T>* scanning(const I& _type_determiner, const T& _itl, T_I_FUNCTION& _f, bool _stateless = false) {
-	return new ScanningTransfer<I, T, T_I_FUNCTION>(_itl, _f, _stateless);
+template<class I, class T, class T_I_FUNCTION> Transfer<I, T>& scanning(const I& _type_determiner, const T& _itl, T_I_FUNCTION& _f, bool _stateless = false) {
+	return *new ScanningTransfer<I, T, T_I_FUNCTION>(_itl, _f, _stateless);
 }
 
 #endif

@@ -20,7 +20,7 @@ template<class I, class I_PREDICATE> bool splitting_helper2(I_PREDICATE& predica
 	return ls.empty() || predicate(ls.back());
 }
 
-template<class I, class I_PREDICATE> Transfer<I, std::list<I> >*
+template<class I, class I_PREDICATE> Transfer<I, std::list<I> >&
 	splitting(const I& type_determiner,I_PREDICATE& predicate) {
 	std::list<I> type_determiner2;
 	std::function<std::list<I>(const std::list<I>&, const I&)> f1(
@@ -29,7 +29,7 @@ template<class I, class I_PREDICATE> Transfer<I, std::list<I> >*
 		std::bind(splitting_helper2<I, I_PREDICATE>, predicate, _1));
 	std::list<I> init;
 
-	return *scanning(type_determiner, init, f1)
+	return scanning(type_determiner, init, f1)
 		>>
 		filter(type_determiner2, f2);
 }
@@ -53,7 +53,7 @@ template<class X> void cout_list(const std::list<X>& ls) {
 	}
 }
 
-template<class I, class O, class FUNCTIONAL> Transfer<I, O>* map(const I& type_determiner, const O& type_determiner2, FUNCTIONAL& f) {
+template<class I, class O, class FUNCTIONAL> Transfer<I, O>& map(const I& type_determiner, const O& type_determiner2, FUNCTIONAL& f) {
 	std::function<O(const O&, const I&)> f2(std::bind(f, _2));
 
 	return scanning(type_determiner, type_determiner2, f2, true);

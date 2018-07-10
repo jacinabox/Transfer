@@ -29,12 +29,7 @@ public:
 		std::auto_ptr<Transfer<I, O> > transfer2 = transfer->transduce(input, sink);
 
 
-		//Subsequent functions return a fixed value for a transfer.
-		std::function<std::auto_ptr<Transfer<I, O> >()> tf2(std::bind(
-			identity__<std::auto_ptr<Transfer<I, O> > >,
-			transfer2));
-
-		return std::auto_ptr<Transfer<I, O> >(new LazyTransfer(tf2));
+		return transfer2;
 	}
 	virtual bool is_stateless() const {
 		return false;
@@ -46,8 +41,8 @@ public:
 
 /////////////////////////////////////
 
-template<class I, class O> Transfer<I, O>* lazy(std::function<std::auto_ptr<Transfer<I, O> >()>& _tf) {
-	return new LazyTransfer<I, O>(_tf);
+template<class I, class O> Transfer<I, O>& lazy(std::function<std::auto_ptr<Transfer<I, O> >()>& _tf) {
+	return *new LazyTransfer<I, O>(_tf);
 }
 
 #endif

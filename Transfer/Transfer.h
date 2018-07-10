@@ -26,6 +26,10 @@ public:
 	//pointer returned is null. When the pointer returned is null, this indicates that
 	//the calling object can continue to use the transfer object it already has, and
 	//just called.
+	//
+	//If a transfer object is non-stateless (as indicated by the result of is_stateless
+	//method), then it may return a stateless object from transduce. If it is stateless,
+	//transduce must return a null pointer.
 	virtual std::auto_ptr<Transfer<I, O> > transduce(const I& input,
 		std::function<void(const O&)>& sink) const {
 		return std::auto_ptr<Transfer<I, O> >(0);

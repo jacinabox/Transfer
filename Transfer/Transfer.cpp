@@ -28,6 +28,10 @@ bool predicate(const int& x) {
 	return x == 32; //Test for space character.
 }
 
+template<class T, class T2> T const__(T& x, const T2& x2) {
+	return x;
+}
+
 char incr(const char& c) { return c + 1; }
 
 template<typename I, typename O> auto_ptr<Transfer<I, O> > make_auto_ptr
@@ -38,11 +42,11 @@ template<typename I, typename O> auto_ptr<Transfer<I, O> > make_auto_ptr
 	return auto_ptr<Transfer<I, O> >(x);
 }
 
-template<class X > Transfer<X, X>* identity_() {
+template<class X > Transfer<X, X>& identity_() {
 
 	//Identity wrapper.
 
-	return new IdentityTransfer<X>();
+	return *new IdentityTransfer<X>();
 }
 
 int _plus(int n, int m) { return n + m; }
@@ -58,9 +62,12 @@ int main()
 
 	//The transfer interface uses operator overloading; please see the code of splitting in
 	//Miscellaneous.h for example.
-	auto_ptr<Transfer<char, list<char> > > transfer(/**(*map(n, n, incr) >> map(n, n, incr)) >> */
-		splitting(n, f)
-		/*| (*map(n, n, incr) >> new Transfer<char, list<char> >())*/);
+	auto_ptr<Transfer<char, list<char> > > transfer(&
+		first_with(map(n, list<char>(2, 'a'),
+		std::bind(const__<list<char>, char >, std::list<char>(), _1)),
+
+		splitting(n, f))
+	);
 
 	//std::auto_ptr<Transfer<int, int> > ptr;
 	//std::function<std::auto_ptr<Transfer<int, int> >()> f3(std::bind(identity__<std::auto_ptr<Transfer<int, int> > >,

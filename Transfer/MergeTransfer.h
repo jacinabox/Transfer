@@ -42,14 +42,14 @@ public:
 
 ////////////////////////////////
 
-template<class I, class O> Transfer<I, O>* operator |(Transfer<I, O>& transfer1, Transfer<I, O>* transfer2) {
-	if (transfer1.is_stateless() && transfer2->is_stateless()) {
-		return new StatelessMergeTransfer<I, O>(std::auto_ptr<Transfer<I, O> >(&transfer1),
-			std::auto_ptr<Transfer<I, O> >(transfer2));
+template<class I, class O> Transfer<I, O>& operator |(Transfer<I, O>& transfer1, Transfer<I, O>& transfer2) {
+	if (transfer1.is_stateless() && transfer2.is_stateless()) {
+		return *new StatelessMergeTransfer<I, O>(std::auto_ptr<Transfer<I, O> >(&transfer1),
+			std::auto_ptr<Transfer<I, O> >(&transfer2));
 	}
 	else {
-		return new MergeTransfer<I, O>(std::auto_ptr<Transfer<I, O> >(&transfer1),
-			std::auto_ptr<Transfer<I, O> >(transfer2));
+		return *new MergeTransfer<I, O>(std::auto_ptr<Transfer<I, O> >(&transfer1),
+			std::auto_ptr<Transfer<I, O> >(&transfer2));
 	}
 }
 

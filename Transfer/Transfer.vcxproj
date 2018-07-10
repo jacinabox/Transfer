@@ -140,6 +140,7 @@
   <ItemGroup>
     <ClInclude Include="ComposeTransfer.h" />
     <ClInclude Include="FilterTransfer.h" />
+    <ClInclude Include="FirstWIthTransfer.h" />
     <ClInclude Include="IdentityTransfer.h" />
     <ClInclude Include="LazyTransfer.h" />
     <ClInclude Include="MergeTransfer.h" />
