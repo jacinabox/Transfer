@@ -29,6 +29,7 @@ template<class O1, class O2, class SINK_O2> typedef std::_Binder<void,
 
 template<class I, class O1, class O2> class ComposeTransfer : public Transfer<I, O2> {
 protected:
+	//Mutation of the transfer1 variable, is limited to taking ownership.
 	mutable std::auto_ptr<Transfer<I, O1> > transfer1;
 	mutable std::auto_ptr<Transfer<O1, O2> > transfer2;
 
@@ -51,7 +52,7 @@ public:
 
 
 		//Set up variables to capture the components that will make up the succeeding transfer.
-		
+		std::auto_ptr<Transfer<I, O1> > new_transfer1;
 		
 		
 		//Set up a function to serve as sink for the first transfer. The second component
@@ -63,12 +64,12 @@ public:
 		std::function<void(const O1&)> f(std::bind(helper<O1, O2>, &transfer2, sink, _1));
 
 		//Process the input.
-		ptr_assignment_helper(transfer1, transfer1, transfer1->transduce(input, f));
-		//if (!new_transfer1.get()) new_transfer1.reset(transfer1->clone());
+		ptr_assignment_helper(new_transfer1, transfer1, transfer1->transduce(input, f));
+		
 
 
 		//Reconstruct a succeeding transfer.
-		return std::auto_ptr<Transfer<I, O2> >(new ComposeTransfer(transfer1, transfer2));
+		return std::auto_ptr<Transfer<I, O2> >(new ComposeTransfer(new_transfer1, transfer2));
 	}
 
 	virtual bool is_stateless() const {

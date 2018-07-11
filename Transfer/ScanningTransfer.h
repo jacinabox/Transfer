@@ -9,12 +9,11 @@ template<class I, class  T, class T_I_FUNCTION> class ScanningTransfer :
 protected:
 	T itl;
 	T_I_FUNCTION f;
-	bool stateless;
 
 public:
-	//Boolean variable indicates whether or not this scan is being used as a map,
-	//in which case it is stateless.
-	ScanningTransfer(const T& _itl, const T_I_FUNCTION& _f, bool _stateless=false) : itl(_itl), f(_f), stateless(_stateless) {
+
+
+	ScanningTransfer(const T& _itl, const T_I_FUNCTION& _f) : itl(_itl), f(_f) {
 	}
 	virtual ~ScanningTransfer() {
 	}
@@ -24,18 +23,21 @@ public:
 		return std::auto_ptr<Transfer<I, T> > (new ScanningTransfer(itl2, f));
 	}
 	virtual bool is_stateless() const {
-		return stateless;
+		return false;
 	}
 	virtual Transfer<I, T>* clone() const {
-		return new ScanningTransfer<I, T, T_I_FUNCTION>(itl, f, stateless);
+		return new ScanningTransfer<I, T, T_I_FUNCTION>(itl, f);
 	}
 };
 
 
 ///////////////////////////////////////////
 
-template<class I, class T, class T_I_FUNCTION> Transfer<I, T>& scanning(const I& _type_determiner, const T& _itl, T_I_FUNCTION& _f, bool _stateless = false) {
-	return *new ScanningTransfer<I, T, T_I_FUNCTION>(_itl, _f, _stateless);
+template<class T, class T_I_FUNCTION> Transfer<typename T_I_FUNCTION::second_argument_type, T>&
+	_scanning(const T& _itl, T_I_FUNCTION _f) {
+	return *new ScanningTransfer<typename T_I_FUNCTION::second_argument_type, T, T_I_FUNCTION>(_itl, _f);
 }
+
+#define scanning(ITL, F) (_scanning(ITL, make_function(F)))
 
 #endif

@@ -8,7 +8,7 @@
 
 using namespace std::placeholders;
 
-template<class I, class I_PREDICATE> std::list<I> splitting_helper(I_PREDICATE& predicate, const std::list<I> & ls, const I& x) {
+template<class I, class I_PREDICATE> std::list<I> splitting_helper(I_PREDICATE& predicate, const std::list<I> & ls, I x) {
 	std::list<I> ls2;
 
 	if (!(ls.empty() || predicate(ls.back()))) { const_cast<std::list<I>& >(ls).swap(ls2); }
@@ -20,19 +20,24 @@ template<class I, class I_PREDICATE> bool splitting_helper2(I_PREDICATE& predica
 	return ls.empty() || predicate(ls.back());
 }
 
-template<class I, class I_PREDICATE> Transfer<I, std::list<I> >&
-	splitting(const I& type_determiner,I_PREDICATE& predicate) {
-	std::list<I> type_determiner2;
-	std::function<std::list<I>(const std::list<I>&, const I&)> f1(
-		std::bind(splitting_helper<I, I_PREDICATE>, predicate, _1, _2));
-	std::function<bool(const std::list<I>&)> f2(
-		std::bind(splitting_helper2<I, I_PREDICATE>, predicate, _1));
-	std::list<I> init;
+//Note: Predicates have to accept their arguments passed by value; otherwise we are creating a list with reference
+//value type and that's not allowed.
+template<class I_PREDICATE> Transfer<typename I_PREDICATE::argument_type, std::list<typename I_PREDICATE::argument_type> >&
+	_splitting(I_PREDICATE& predicate) {
 
-	return scanning(type_determiner, init, f1)
+	std::function<std::list<typename I_PREDICATE::argument_type>(const std::list<typename I_PREDICATE::argument_type>&,
+		I_PREDICATE::argument_type)> f1(
+		std::bind(splitting_helper<typename I_PREDICATE::argument_type, I_PREDICATE>, predicate, _1, _2));
+	std::function<bool(std::list<typename I_PREDICATE::argument_type>)> f2(
+		std::bind(splitting_helper2<typename I_PREDICATE::argument_type, I_PREDICATE>, predicate, _1));
+	std::list<typename I_PREDICATE::argument_type> init;
+
+	return scanning(init, f1)
 		>>
-		filter(type_determiner2, f2);
+		filter(f2);
 }
+
+#define splitting(PREDICATE) (_splitting(make_function(PREDICATE)))
 
 template<class X> void cout_list(const std::list<X>& ls) {
 	std::list<X>& ls2 = const_cast<std::list<X>&>(ls);
@@ -51,12 +56,6 @@ template<class X> void cout_list(const std::list<X>& ls) {
 		}
 		cout << endl;
 	}
-}
-
-template<class I, class O, class FUNCTIONAL> Transfer<I, O>& map(const I& type_determiner, const O& type_determiner2, FUNCTIONAL& f) {
-	std::function<O(const O&, const I&)> f2(std::bind(f, _2));
-
-	return scanning(type_determiner, type_determiner2, f2, true);
 }
 
 //The default implementation of Transfer passes on no messages. This is just an alias.

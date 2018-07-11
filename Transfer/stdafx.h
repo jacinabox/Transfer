@@ -24,6 +24,7 @@
 #include "LazyTransfer.h"
 #include "FirstWithTransfer.h"
 #include "WithRemainderTransfer.h"
+#include "MapTransfer.h"
 #include "Miscellaneous.h"
 #include "FileTransfer.h"
 #include <memory>

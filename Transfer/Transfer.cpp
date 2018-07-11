@@ -24,15 +24,15 @@ void printer(const list<char>& ls) {
 	cout_list(ls);
 }
 
-bool predicate(const int& x) {
-	return x == 32; //Test for space character.
+bool predicate(char x) {
+	return x == 33; //Test for space character.
 }
 
 template<class T, class T2> T const__(T& x, const T2& x2) {
 	return x;
 }
 
-char incr(const char& c) { return c + 1; }
+char incr(char c) { return c + 1; }
 
 template<typename I, typename O> auto_ptr<Transfer<I, O> > make_auto_ptr
 (Transfer<I, O>* x) {
@@ -51,6 +51,8 @@ template<class X > Transfer<X, X>& identity_() {
 
 int _plus(int n, int m) { return n + m; }
 
+//I have to make these interfaces work with all reasonable permutations of references,
+//const qualifiers.
 int main()
 {
 	//function<int(int, int)> f(*_plus);
@@ -58,26 +60,13 @@ int main()
 
 	function<char()> f0(std::bind(identity__<char>, n));
 	
-	function<bool(const char&)> f(predicate);
+	function<bool(char)> f(predicate);
 
 	//The transfer interface uses operator overloading; please see the code of splitting in
 	//Miscellaneous.h for example.
 	auto_ptr<Transfer<char, list<char> > > transfer(&
-		first_with(map(n, list<char>(2, 'a'),
-			std::bind(const__<list<char>, char >, std::list<char>(), _1)),
-
-			with_remainder(identity_<char>()) >> map(std::make_pair(
-				std::auto_ptr<Transfer<char, char> >(new Transfer<char, char>()),
-				'\0'), '\0', second_<std::auto_ptr<Transfer<char, char> >, char>) >>
-			splitting(n, f))
-	);
-	//FILE* file = fopen("C:\\users\\james\\desktop\\testcmf.hs", "r");
-	//auto_ptr<Transfer<char, list<char> > > transfer(&(reader(n, file) >> splitting(n, f)));
-
-	//std::auto_ptr<Transfer<int, int> > ptr;
-	//std::function<std::auto_ptr<Transfer<int, int> >()> f3(std::bind(identity__<std::auto_ptr<Transfer<int, int> > >,
-//		ptr));
-	//auto_ptr<Transfer<int, int> > test(lazy(f3));
+			(map(incr) >> splitting(f))
+		);
 
 	function<char()> f2(reader);
 	function<void(const list<char>&)> _printer(printer);
