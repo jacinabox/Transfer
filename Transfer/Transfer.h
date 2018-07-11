@@ -18,9 +18,11 @@ public:
 	virtual ~Transfer() {
 	}
 
-	//A transfer effectively cannot modify itself (because transduce is const), so it has
+	//A transfer in general cannot modify itself (because transduce is const), so it has
 	//to prepare a representation with its new state. Places where a transfer object
 	//absolutely has to modify its state internally, will end up being marked mutable.
+	//Transfers may be modified to take ownership of their components, and those components
+	//set to null.
 	//
 	//The caller must take ownership of the transfer pointer returned, except when the
 	//pointer returned is null. When the pointer returned is null, this indicates that
@@ -97,7 +99,7 @@ public:
 	virtual std::auto_ptr<Transfer<int, int> > transduce(const int& input,
 		std::function<void(const int&)>& sink) const {
 		sink( 1 + input);
-		return std::auto_ptr<Transfer<int, int> >(const_cast<ExampleTransfer*>(this));
+		return std::auto_ptr<Transfer<int, int> >(0);
 	}
 };
 

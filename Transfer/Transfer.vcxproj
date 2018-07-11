@@ -139,6 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ComposeTransfer.h" />
+    <ClInclude Include="FileTransfer.h" />
     <ClInclude Include="FilterTransfer.h" />
     <ClInclude Include="FirstWIthTransfer.h" />
     <ClInclude Include="IdentityTransfer.h" />
@@ -152,6 +153,7 @@
     <ClInclude Include="SwitchingTransfer.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Transfer.h" />
+    <ClInclude Include="WithRemainderTransfer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

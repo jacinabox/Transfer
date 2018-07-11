@@ -23,7 +23,9 @@
 #include "MergeTransfer.h"
 #include "LazyTransfer.h"
 #include "FirstWithTransfer.h"
+#include "WithRemainderTransfer.h"
 #include "Miscellaneous.h"
+#include "FileTransfer.h"
 #include <memory>
 #include <functional>
 

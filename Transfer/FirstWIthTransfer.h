@@ -12,6 +12,8 @@ protected:
 public:
 	FirstWithTransfer(std::auto_ptr<Transfer<I, O> > _transfer1, std::auto_ptr<Transfer<I, O> > _transfer2)
 		: transfer1(_transfer1), transfer2(_transfer2) {
+		assert(transfer1.get());
+		assert(transfer2.get());
 	}
 
 	virtual ~FirstWithTransfer() {

@@ -41,17 +41,18 @@ public:
 
 		return std::auto_ptr<Transfer<I, O2> >(0);
 	}
+
 	//StatelessComposeTransfers are always assumed to be stateless because I
 	//only construct transfers using it, when the component transfers are
 	//known to be stateless.
 	virtual Transfer<I, O2>* clone() const {
-		Transfer<O1, O2>* transfer2_ = transfer2.release();
+		/*Transfer<O1, O2>* transfer2_ = transfer2.release();
 
 
-		transfer2.reset(new Transfer<O1, O2>());
+		transfer2.reset(new Transfer<O1, O2>());*/
 
 		return new StatelessComposeTransfer<I, O1, O2>(std::auto_ptr<Transfer<I, O1> >(transfer1->clone()),
-			std::auto_ptr<Transfer<O1, O2> >(transfer2_));
+			std::auto_ptr<Transfer<O1, O2> >(transfer2->clone()));
 	}
 };
 

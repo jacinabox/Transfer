@@ -6,7 +6,7 @@
 
 template<class I, class O> class MergeTransfer : public Transfer<I, O> {
 protected:
-	std::auto_ptr<Transfer<I, O> > transfer1, transfer2;
+	mutable std::auto_ptr<Transfer<I, O> > transfer1, transfer2;
 
 public:
 	MergeTransfer(std::auto_ptr<Transfer<I, O> >& _transfer1,
@@ -19,17 +19,17 @@ public:
 	}
 	virtual std::auto_ptr<Transfer<I, O> > transduce(const I& input, std::function<void(const O&)>& sink) const {
 		//Split the input stream and feed it through both transfers.
-		std::auto_ptr<Transfer<I, O> > new_transfer1, new_transfer2;
+		//std::auto_ptr<Transfer<I, O> > new_transfer1, new_transfer2;
 
-		new_transfer1 = transfer1->transduce(input, sink);
-		if (!new_transfer1.get()) new_transfer1.reset(transfer1->clone());
-		new_transfer2 = transfer2->transduce(input, sink);
-		if (!new_transfer2.get()) new_transfer2.reset(transfer2->clone());
+		ptr_assignment_helper(transfer1, transfer1, transfer1->transduce(input, sink));
+		//if (!new_transfer1.get()) new_transfer1.reset(transfer1->clone());
+		ptr_assignment_helper(transfer2, transfer2, transfer2->transduce(input, sink));
+		//if (!new_transfer2.get()) new_transfer2.reset(transfer2->clone());
 		
 		//ptr_assignment_helper(new_transfer2, transfer2, transfer2->transduce(input, sink));
 
 		//Reconstruct a new transfer to use for the next input.
-		return std::auto_ptr<Transfer<I, O> >( new MergeTransfer<I, O>(new_transfer1, new_transfer2));
+		return std::auto_ptr<Transfer<I, O> >( new MergeTransfer<I, O>(transfer1, transfer2));
 	}
 	virtual bool is_stateless() const {
 		return false;

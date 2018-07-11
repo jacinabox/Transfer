@@ -59,4 +59,9 @@ template<class I, class O, class FUNCTIONAL> Transfer<I, O>& map(const I& type_d
 	return scanning(type_determiner, type_determiner2, f2, true);
 }
 
+//The default implementation of Transfer passes on no messages. This is just an alias.
+template<class I, class O> Transfer<I, O>& empty() {
+	return *new Transfer<I, O>();
+}
+
 #endif
