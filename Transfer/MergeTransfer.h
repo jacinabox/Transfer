@@ -6,6 +6,7 @@
 
 template<class I, class O> class MergeTransfer : public Transfer<I, O> {
 protected:
+	//Mutable is for taking ownership of the references.
 	mutable std::auto_ptr<Transfer<I, O> > transfer1, transfer2;
 
 public:
