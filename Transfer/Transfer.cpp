@@ -62,7 +62,7 @@ int main()
 
 	//The transfer interface uses operator overloading; please see the code of splitting in
 	//Miscellaneous.h for example.
-	/*auto_ptr<Transfer<char, list<char> > > transfer(&
+	auto_ptr<Transfer<char, list<char> > > transfer(&
 		first_with(map(n, list<char>(2, 'a'),
 			std::bind(const__<list<char>, char >, std::list<char>(), _1)),
 
@@ -70,16 +70,16 @@ int main()
 				std::auto_ptr<Transfer<char, char> >(new Transfer<char, char>()),
 				'\0'), '\0', second_<std::auto_ptr<Transfer<char, char> >, char>) >>
 			splitting(n, f))
-	);*/
-	FILE* file = fopen("C:\\users\\james\\desktop\\testcmf.hs", "r");
-	auto_ptr<Transfer<char, list<char> > > transfer(&(reader(n, file) >> splitting(n, f)));
+	);
+	//FILE* file = fopen("C:\\users\\james\\desktop\\testcmf.hs", "r");
+	//auto_ptr<Transfer<char, list<char> > > transfer(&(reader(n, file) >> splitting(n, f)));
 
 	//std::auto_ptr<Transfer<int, int> > ptr;
 	//std::function<std::auto_ptr<Transfer<int, int> >()> f3(std::bind(identity__<std::auto_ptr<Transfer<int, int> > >,
 //		ptr));
 	//auto_ptr<Transfer<int, int> > test(lazy(f3));
 
-	function<char()> f2(f0);
+	function<char()> f2(reader);
 	function<void(const list<char>&)> _printer(printer);
 
 	// The example case accepts characters from stdin, splits them by spaces, and prints them.

@@ -34,7 +34,8 @@ public:
 		return false;
 	}
 	virtual Transfer<I, O>* clone() const {
-		return new FirstWithTransfer(std::auto_ptr<Transfer<I, O> >(transfer1->clone()), transfer2);
+		return new FirstWithTransfer(std::auto_ptr<Transfer<I, O> >(transfer1->clone()),
+			std::auto_ptr<Transfer<I, O> >(transfer2->clone()));
 	}
 };
 

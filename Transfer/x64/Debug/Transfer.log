@@ -1,7 +1,6 @@
-﻿  Transfer.cpp
+﻿  stdafx.cpp
+  Transfer.cpp
 c:\users\james\documents\transfer\transfer\transfer.cpp(16): warning C4996: 'getch': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _getch. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.14393.0\ucrt\conio.h(452): note: see declaration of 'getch'
-c:\users\james\documents\transfer\transfer\transfer.cpp(74): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.14393.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
   Transfer.vcxproj -> C:\Users\james\Documents\Transfer\x64\Debug\Transfer.exe
   Transfer.vcxproj -> C:\Users\james\Documents\Transfer\x64\Debug\Transfer.pdb (Partial PDB)
