@@ -16,8 +16,8 @@ public:
 	virtual std::auto_ptr<Transfer<I, O> > transduce(const I& input,
 		std::function<void(const O&)>& sink) const {
 		
-		//TODO: come up with better solution.
-		sink(functional(const_cast<I&>(input)));
+
+		sink(functional(input));
 
 
 		return std::auto_ptr<Transfer<I, I> >(0);
