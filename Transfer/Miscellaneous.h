@@ -63,4 +63,5 @@ template<class I, class O> Transfer<I, O>& empty() {
 	return *new Transfer<I, O>();
 }
 
+
 #endif

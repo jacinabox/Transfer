@@ -57,6 +57,7 @@ int main()
 {
 	//function<int(int, int)> f(*_plus);
 	char n = 0;
+	list<char> ls;
 
 	function<char()> f0(std::bind(identity__<char>, n));
 	
@@ -67,6 +68,7 @@ int main()
 	auto_ptr<Transfer<char, list<char> > > transfer(&
 			(map(incr) >> splitting(f))
 		);
+	auto_ptr<Transfer<SWITCH_INPUT(char, list<char>), list<char> > > transfer2(&r_switch(*transfer));
 
 	function<char()> f2(reader);
 	function<void(const list<char>&)> _printer(printer);

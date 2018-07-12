@@ -20,11 +20,11 @@ public:
 
 	//A transfer in general cannot modify itself (because transduce is const), so it has
 	//to prepare a representation with its new state. Places where a transfer object
-	//absolutely has to modify its state internally, will end up being marked mutable.
+	//absolutely has to modify its state internally, end up being marked mutable.
 	//Transfers may be modified to take ownership of their components, and those components
-	//set to null. If a transduce will cause the caller to take ownership of some
+	//set to null. If a transduce causes the caller to take ownership of some
 	//components, this must happen *after* all input processing in that transduce method
-	//completes, so that switches will be sufficiently delayed.
+	//completes.
 	//
 	//The caller must take ownership of the transfer pointer returned, except when the
 	//pointer returned is null. When the pointer returned is null, this indicates that
