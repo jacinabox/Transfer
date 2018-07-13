@@ -139,6 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ComposeTransfer.h" />
+    <ClInclude Include="FeedbackTransfer.h" />
     <ClInclude Include="FileTransfer.h" />
     <ClInclude Include="FilterTransfer.h" />
     <ClInclude Include="FirstWIthTransfer.h" />

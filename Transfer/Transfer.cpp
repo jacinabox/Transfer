@@ -69,6 +69,7 @@ int main()
 			(map(incr) >> splitting(f))
 		);
 	auto_ptr<Transfer<SWITCH_INPUT(char, list<char>), list<char> > > transfer2(&r_switch(*transfer));
+	auto_ptr<Transfer<char, char> > transfer3(&feedback(map(incr)));
 
 	function<char()> f2(reader);
 	function<void(const list<char>&)> _printer(printer);
