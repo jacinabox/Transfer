@@ -108,7 +108,7 @@ public:
 ////////////////////////////////////
 
 template<class I, class O> void ptr_assignment_helper(std::auto_ptr<Transfer<I, O> >& ptr, std::auto_ptr<Transfer<I, O> >& ptr2, std::auto_ptr<Transfer<I, O> > ptr3) {
-	ptr.reset(ptr3.get() ? ptr3.release() : ptr2->clone());
+	ptr.reset(ptr3.get() ? ptr3.release() : ptr2.release());
 }
 
 #endif
