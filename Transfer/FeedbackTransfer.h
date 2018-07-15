@@ -2,13 +2,16 @@
 #define _FEEDBACK
 
 #include <list>
+#include <iterator>
 #include <memory>
 #include <functional>
+#include <algorithm>
 
 template<class X> void feedback_helper(std::function<void(const X&)>& sink,
 	std::list<X>* ls,
+	typename std::list<X> ::const_iterator* it,
 	const X& input) {
-	ls->push_back(input);
+	ls->insert(*it, input);
 	sink(input);
 }
 
@@ -24,13 +27,18 @@ public:
 	virtual std::auto_ptr<Transfer<X, X> > transduce(const X& input, std::function<void(const X&)>& sink)
 		const {
 		std::list<X> ls(1, input);
+		typename std::list<X>::const_iterator it = ls.cbegin();
+
 		X x;
-		std::function<void(const X&)> f(std::bind(feedback_helper<X>, sink, &ls, _1));
+		std::function<void(const X&)> f(std::bind(feedback_helper<X>, sink, &ls, &it, _1));
 
 		while (!ls.empty()) {
 			x = ls.front();
 			ls.pop_front();
 			ptr_assignment_helper(transfer, transfer, transfer->transduce(x, f));
+
+
+			it = ls.cbegin();
 		}
 		return std::auto_ptr<Transfer<X, X> >(new FeedbackTransfer(transfer));
 	}
