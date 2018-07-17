@@ -34,6 +34,9 @@ template<class T, class T2> T const__(T& x, const T2& x2) {
 
 char incr(char c) { return c + 1; }
 
+template<class T> void null_sink(const T& x) {
+}
+
 template<typename I, typename O> auto_ptr<Transfer<I, O> > make_auto_ptr
 (Transfer<I, O>* x) {
 
@@ -51,15 +54,23 @@ template<class X > Transfer<X, X>& identity_() {
 
 int _plus(int n, int m) { return n + m; }
 
+bool flip_flop(bool x, MSG msg) {
+	return !x;
+}
+
+LPTSTR pickMessage(bool x) {
+	return (x ? _T("One") : _T("Two"));
+}
+
 //I have to make these interfaces work with all reasonable permutations of references,
 //const qualifiers.
-int main()
+int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	//function<int(int, int)> f(*_plus);
 	char n = 0;
 	list<char> ls;
 
-	function<char()> f0(std::bind(identity__<char>, n));
+	function<Nothing()> f0(std::bind(identity__<Nothing>, Nothing()));
 	
 	function<bool(char)> f(predicate);
 
@@ -75,6 +86,21 @@ int main()
 	function<void(const list<char>&)> _printer(printer);
 
 	// The example case accepts characters from stdin, splits them by spaces, and prints them.
-	Transfer<char, list<char> >::transduce_loop(f2, transfer, _printer);
+	// Note: enable to see an example of processing with transfers in console mode.
+	//Transfer<char, list<char> >::transduce_loop(f2, transfer, _printer);
+
+	/////////////////////////////////////////
+
+	HWND hwnd = create_frame_window(_T("Test"), NULL, NULL);
+
+	//In this example, incoming window messages drive a flip-flop, which changes the title bar text.
+	Transfer<Nothing, BOOL>& transfer4 = win32_source() >>
+		scanning(true, flip_flop) >>
+		map(pickMessage) >>
+		set_window_text(hwnd);
+
+	Transfer<Nothing, BOOL>::transduce_loop(f0,
+		std::auto_ptr<Transfer<Nothing, BOOL> >(&transfer4),
+		std::function<void(const BOOL&)>(null_sink<BOOL>));
     return 0;
 }

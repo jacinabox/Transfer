@@ -108,14 +108,41 @@ Transfer<MSG, BOOL>& post_message() {
 	return map(post_helper);
 }
 
-BOOL set_window_text_helper(HWND hwnd, string s) {
-	return SetWindowText(hwnd, s.c_str());
+BOOL set_window_text_helper(HWND hwnd, LPTSTR s) {
+	return SetWindowText(hwnd, s);
 }
 
-Transfer<string, BOOL>& set_window_text(HWND hwnd) {
-	std::function<BOOL(string)> f(std::bind(set_window_text_helper, hwnd, _1));
+Transfer<LPTSTR, BOOL>& set_window_text(HWND hwnd) {
+	std::function<BOOL(LPTSTR)> f(std::bind(set_window_text_helper, hwnd, _1));
 
 	return map(f);
+}
+
+///////////////////////////////////////
+
+const static TCHAR* w_class_name = _T("_TR_FRAME_WINDOW");
+
+HWND create_frame_window(LPCTSTR title, HICON icon, HMENU menu) {
+	HINSTANCE inst;
+	WNDCLASS wndclass;
+
+	inst = GetModuleHandle(NULL);
+	wndclass.style = 0;
+	wndclass.lpfnWndProc = DefWindowProc;
+	wndclass.cbClsExtra = 0;
+	wndclass.cbWndExtra = 0;
+	wndclass.hInstance = inst;
+	wndclass.hIcon = icon;
+	wndclass.hCursor = LoadCursor(inst, IDC_ARROW);
+	wndclass.hbrBackground = static_cast<HBRUSH>(GetStockObject(HOLLOW_BRUSH));
+	wndclass.lpszMenuName = NULL;
+	wndclass.lpszClassName = w_class_name;
+	
+	RegisterClass(&wndclass);
+	return CreateWindowEx(0, w_class_name, title, WS_VISIBLE | WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, menu,
+		inst, NULL);
+
 }
 
 #endif
