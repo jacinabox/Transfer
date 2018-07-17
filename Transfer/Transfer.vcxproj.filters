@@ -57,9 +57,6 @@
     <ClInclude Include="StatelessMergeTransfer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FirstWIthTransfer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="WithRemainderTransfer.h">
       <Filter>Header Files</Filter>
     </ClInclude>

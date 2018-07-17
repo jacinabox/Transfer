@@ -79,7 +79,8 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	auto_ptr<Transfer<char, list<char> > > transfer(&
 			(map(incr) >> splitting(f))
 		);
-	auto_ptr<Transfer<SWITCH_INPUT(char, list<char>), list<char> > > transfer2(&r_switch(*transfer));
+	std::function<std::auto_ptr<Transfer<char, list<char> > >(char)> _f;
+	auto_ptr<Transfer<char, list<char> > > transfer2(&r_switch<char, list<char> >(_f, *transfer));
 	auto_ptr<Transfer<char, char> > transfer3(&feedback(map(incr)));
 
 	function<char()> f2(reader);

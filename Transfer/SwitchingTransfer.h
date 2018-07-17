@@ -67,54 +67,69 @@ template<class T, class U> U unsafe_retrieve_right_data(Sum<T, U> sum) {
 
 /////////////////////////////////
 
-#define SWITCH_INPUT_TYPES(I, O) <std::auto_ptr<Transfer<I, O> >, I>
-#define SWITCH_INPUT(I, O) Sum SWITCH_INPUT_TYPES(I, O)
 
-template<class I, class O> class SwitchingTransfer : public Transfer<SWITCH_INPUT(I, O), O> {
+
+
+template<class I, class O> class SwitchingTransfer : public Transfer<I, O> {
 protected:
-	std::auto_ptr<Transfer<I, O> > transfer;
+	mutable std::auto_ptr<Transfer<I, O> > transfer;
+	std::function<std::auto_ptr<Transfer<I, O> >(I)> transfer_f;
 
 public:
-	SwitchingTransfer(std::auto_ptr<Transfer<I, O> > _transfer) : transfer(_transfer) {
-		assert(transfer.get());
+	//The functional argument returns the transfer to switch to, or null pointer if no switch is desired.
+	//Upon switching this transfer alters its type to that of the transfer being switched to; i.e.
+	//it returns the transfer being switched to, from transduce.
+	SwitchingTransfer(std::auto_ptr<Transfer<I, O> > _transfer,
+		std::function<std::auto_ptr<Transfer<I, O> >(I)> _transfer_f) : transfer(_transfer), transfer_f(_transfer_f) {
 	}
 
 	virtual ~SwitchingTransfer() {
 	}
 
-	//Based on Yampa's switching combinator of arrow type ((I ~> O)+I) ~> O.
-	virtual std::auto_ptr<Transfer<SWITCH_INPUT(I, O), O> > transduce(const SWITCH_INPUT(I, O)& input,
+	//Based on Yampa's one shot-switching combinator.
+	virtual std::auto_ptr<Transfer<I, O> > transduce(I input,
 		std::function<void(const O&)>& sink) const {
-		std::auto_ptr<Transfer<I, O> >* left_data;
-		I* right_data;
-		std::auto_ptr<Transfer<I, O> > transfer2;
-		SWITCH_INPUT(I, O)& p = const_cast<SWITCH_INPUT(I, O)&>(input);
+		std::auto_ptr<Transfer<I, O> > transfer2 = transfer_f(input);
+		std::auto_ptr<Transfer<I, O> > transfer3;
 
-		right_data = p.retrieve_right_data();
-		if (right_data) {
-			transfer2 =  transfer->transduce(*right_data, sink);
-			if (!transfer2.get()) transfer2.reset(transfer->clone());
+		ptr_assignment_helper(transfer3, transfer, transfer->transduce(input, sink));
+		if (transfer2.get()) {
+			return transfer2;
 		}
 		else {
-			left_data = p.retrieve_left_data();
-			assert(left_data);
-			transfer2 = *left_data;
+			return std::auto_ptr<Transfer<I, O> >(new SwitchingTransfer<I, O>(transfer3, transfer_f));
 		}
-
-		return std::auto_ptr<Transfer<SWITCH_INPUT(I, O), O> >(new SwitchingTransfer<I, O>(transfer2));
 	}
 	virtual bool is_stateless() const {
 		return false;
 	}
-	virtual Transfer<SWITCH_INPUT(I, O), O>* clone() const {
-		return new SwitchingTransfer<I, O>(std::auto_ptr<Transfer<I, O> >(transfer->clone()));
+	virtual Transfer<I, O>* clone() const {
+		return new SwitchingTransfer<I, O>(std::auto_ptr<Transfer<I, O> >(transfer->clone()), transfer_f);
 	}
 };
 
 ///////////////////////////////////////
 
-template<class I, class O> Transfer<SWITCH_INPUT(I, O), O>& r_switch(Transfer<I, O>& transfer) {
-	return *new SwitchingTransfer<I, O> (std::auto_ptr<Transfer<I, O> >(&transfer));
+template<class I, class O> Transfer<I, O>& switch_once(Transfer<I, O>& transfer,
+	std::function<std::auto_ptr<Transfer<I, O> >(I)> transfer_f) {
+	return *new SwitchingTransfer<I, O> (std::auto_ptr<Transfer<I, O> >(&transfer), transfer_f);
+}
+
+//////////////////////////////////////
+// Bootstrapping to a repeated switch by recursive definition.
+
+template<class I, class O> std::auto_ptr<Transfer<I, O> > r_switch_helper(std::function<std::auto_ptr<Transfer<I, O> >(I)> transfer_f,
+	I input) {
+	Transfer<I, O>* p_temp = transfer_f(input).release();
+
+	return std::auto_ptr<Transfer<I, O> >(p_temp ? &r_switch(transfer_f, *p_temp) : 0);
+}
+
+template<class I, class O> Transfer<I, O>& r_switch(std::function<std::auto_ptr<Transfer<I, O> >(I)> transfer_f,
+	Transfer<I, O>& transfer) {
+	std::function<std::auto_ptr<Transfer<I, O> >(I)> _f(std::bind(r_switch_helper<I, O>, transfer_f, _1));
+
+	return switch_once<I, O>(transfer, _f);
 }
 
 #endif
