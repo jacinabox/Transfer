@@ -8,7 +8,7 @@
 #include <assert.h>
 //#include <iostream>
 
-typedef int Nothing;
+struct Nothing {};
 
 template<class I, class O> class Transfer {
 public:

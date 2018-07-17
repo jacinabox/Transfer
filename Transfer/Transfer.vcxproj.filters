@@ -72,12 +72,18 @@
     <ClInclude Include="FeedbackTransfer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Win32Transfer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Transfer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32Transfer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

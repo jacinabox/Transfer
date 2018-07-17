@@ -1,0 +1,60 @@
+#ifdef WIN32
+
+#include <list>
+#include <iterator>
+#include "win32_source.h"
+#include "Transfer.h"
+
+static std::list<CWPSTRUCT> messages;
+static bool hook_is_set_flag = false;
+
+static LRESULT WINAPI hook_proc(LONG code, WPARAM wParam, LPARAM lParam) {
+	messages.push_back(*reinterpret_cast<CWPSTRUCT*>(lParam));
+
+	return callNextHookEx(code, wParam, lParam);
+}
+
+class Win32Transfer : public Transfer<Nothing, MSG> {
+public:
+	Win32Transfer() {
+	}
+	virtual ~Win32Transfer() {
+	}
+	virtual std::auto_ptr<Transfer<Nothing, MSG> > transduce(const Nothing& dummy_input,
+		std::function<void(const MSG&)>& sink) const {
+		
+		MSG msg;
+
+		if (!GetMessage(&msg)) throw "Received WM_QUIT message";
+	
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+
+		sink(msg);
+
+		std::list<CWPSTRUCT>::iterator it;
+
+		while ((it=messages.begin()) != messages.end()) {
+			msg.hwnd = it->hwnd;
+			msg.message = it->message;
+			msg.wParam  = it->wParam;
+			msg.lParam = it->lParam;
+
+			messages.pop_front();
+		}
+	}
+	virtual Transfer<Nothing, MSG>* clone() const {
+		return new Win32Transfer();
+	}
+};
+
+Transfer<Nothing, MSG> win32_source() {
+	if (!hook_is_set_flag) {
+		SetWindowsHookEx(WH_CALLWNDPROC, hook_proc, NULL, NULL);
+		hook_is_set_flag = true;
+	}
+	
+	return *new Win32Transfer();
+}
+
+#endif

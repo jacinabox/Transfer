@@ -20,7 +20,7 @@ public:
 		sink(functional(input));
 
 
-		return std::auto_ptr<Transfer<I, I> >(0);
+		return std::auto_ptr<Transfer<I, O> >(0);
 
 	}
 	virtual Transfer<I, O>* clone() const {

@@ -28,6 +28,7 @@
 #include "FeedbackTransfer.h"
 #include "Miscellaneous.h"
 #include "FileTransfer.h"
+#include "Win32Transfer.h"
 #include <memory>
 #include <functional>
 

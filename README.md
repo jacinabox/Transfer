@@ -1,5 +1,4 @@
-The FRP/stream processing library that will get you laid(TM) and make FRP
-comprehensible to C++ programmers.
+The FRP/stream processing library that makes arrowized FRP comprehensible to C++ programmers.
 
 Continuation passing style is leveraged to provide fanout of single inputs
 to multiple outputs (but the use of CPS is standard by this point).
