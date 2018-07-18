@@ -51,8 +51,8 @@ bool flip_flop(bool x, MSG msg) {
 	return !x;
 }
 
-LPTSTR pickMessage(bool x) {
-	return (x ? _T("One") : _T("Two"));
+std::basic_string<char> pickMessage(bool x) {
+	return std::string(x ? "One" : "Two");
 }
 
 //I have to make these interfaces work with all reasonable permutations of references,

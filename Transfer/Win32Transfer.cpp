@@ -110,12 +110,27 @@ Transfer<MSG, BOOL>& post_message() {
 	return map(post_helper);
 }
 
-BOOL set_window_text_helper(HWND hwnd, LPTSTR s) {
-	return SetWindowText(hwnd, s);
+static BOOL set_window_text_helper(HWND hwnd, std::basic_string<char> s) {
+	return SetWindowTextA(hwnd, s.c_str());
 }
 
-Transfer<LPTSTR, BOOL>& set_window_text(HWND hwnd) {
-	std::function<BOOL(LPTSTR)> f(std::bind(set_window_text_helper, hwnd, _1));
+Transfer<std::basic_string<char>, BOOL>& set_window_text(HWND hwnd) {
+	std::function<BOOL(std::basic_string<char>)> f(std::bind(set_window_text_helper, hwnd, _1));
+
+	return map(f);
+}
+
+static std::basic_string<char> get_window_text_helper(HWND hwnd, Nothing _dummy_input) {
+	char buffer[1024];
+
+	GetWindowTextA(hwnd, buffer, sizeof(buffer) - 1);
+	buffer[sizeof(buffer) - 1] = '\0';
+
+	return std::string(buffer, sizeof(buffer));
+}
+
+Transfer<Nothing, std::basic_string<char> >& get_window_text(HWND hwnd) {
+	std::function<std::basic_string<char>(Nothing)> f(std::bind(get_window_text_helper, hwnd, _1));
 
 	return map(f);
 }

@@ -8,6 +8,7 @@
 #include <tchar.h>
 #include <utility>
 #include <functional>
+#include <string>
 
 //It constructs a transfer that retrieves messages from the queue of messages coming-
 //into a Windows application. It also discharges the duties of a message loop, dispatching
@@ -22,7 +23,8 @@ Transfer<MSG, MSG>& filter_hwnd(HWND hwnd);
 Transfer<MSG, MSG>& filter_code(int code);
 Transfer<MSG, LRESULT>& send_message();
 Transfer<MSG, BOOL>& post_message();
-Transfer<LPTSTR, BOOL>& set_window_text(HWND hwnd);
+Transfer<std::basic_string<char>, BOOL>& set_window_text(HWND hwnd);
+Transfer<Nothing, std::basic_string<char> >& get_window_text(HWND hwnd);
 
 //A helper function to construct a frame window with reasonable defaults.
 HWND create_frame_window(LPCTSTR title, HICON icon, HMENU menu);
