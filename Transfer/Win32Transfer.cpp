@@ -196,6 +196,27 @@ std::function<Nothing(HDC)> rectangle(LPCRECT pRect, HPEN hPen, HBRUSH hBrush) {
 	return std::bind(rectangle_helper, pRect, hPen, hBrush, _1);
 }
 
+static Nothing move_to_helper(const POINT* pPoint, HDC dc) {
+	MoveToEx(dc, pPoint->x, pPoint->y, NULL);
+	return Nothing();
+}
+
+DRAW_FUNCTION move_to(const POINT* pPoint) {
+	return std::bind(move_to_helper, pPoint, _1);
+}
+
+static Nothing line_to_helper(const POINT* pPoint, HPEN hPen, HDC dc) {
+	HGDIOBJ hOldPen = SelectObject(dc, hPen);
+
+	LineTo(dc, pPoint->x, pPoint->y);
+	SelectObject(dc, hOldPen);
+	return Nothing();
+}
+
+DRAW_FUNCTION line_to(const POINT* pPoint, HPEN hPen) {
+	return std::bind(line_to_helper, pPoint, hPen, _1);
+}
+
 ///std::
 
 #endif

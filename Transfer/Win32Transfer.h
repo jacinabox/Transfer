@@ -81,7 +81,8 @@ template<class T, class U, class RHS_FUNCTIONAL> std::function<T(U)> operator >>
 
 DRAW_FUNCTION fill_rect(LPCRECT pRect, HBRUSH hBrush);
 DRAW_FUNCTION rectangle(LPCRECT pRect, HPEN hPen, HBRUSH hBrush);
-
+DRAW_FUNCTION move_to(const POINT* pPoint);
+DRAW_FUNCTION line_to(const POINT* pPoint, HPEN hPen);
 
 #endif
 
