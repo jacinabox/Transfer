@@ -96,8 +96,8 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			map(pickMessage) >>
 			set_window_text(hwnd) >>
 			map(null_sink2<BOOL>)
-			/*| handle_wm_paint(fill_rect(&rect, static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)))
-				>> fill_rect(&rect2, static_cast<HBRUSH>(GetStockObject(GRAY_BRUSH))))*/);
+			| handle_wm_paint2(fill_rect(&rect, static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)))
+				>> fill_rect(&rect2, static_cast<HBRUSH>(GetStockObject(GRAY_BRUSH)))));
 
 	Transfer<Nothing, Nothing>::transduce_loop(f0,
 		std::auto_ptr<Transfer<Nothing, Nothing> >(&transfer4),

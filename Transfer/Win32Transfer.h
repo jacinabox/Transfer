@@ -29,19 +29,36 @@ HWND create_frame_window(LPCTSTR title, HICON icon, HMENU menu);
 
 extern std::function<Nothing(HDC)> wm_paint_handler;
 
-template<class FUNCTIONAL> Nothing handle_wm_paint_helper(std::pair<MSG, FUNCTIONAL> pair) {
+template<class FUNCTIONAL> Nothing handle_wm_paint_helper(std::pair<FUNCTIONAL, MSG> pair) {
 	PAINTSTRUCT ps;
 	HDC dc;
 	
-	if (pair.first.message == WM_PAINT) {
-		wm_paint_handler = pair.second;
+	if (pair.second.message == WM_PAINT) {
+		wm_paint_handler = pair.first;
 	}
 
 	return Nothing();
 }
 
-template<class FUNCTIONAL> Transfer<std::pair<MSG, FUNCTIONAL>, Nothing>& handle_wm_paint() {
+template<class FUNCTIONAL> Transfer<std::pair<FUNCTIONAL, MSG>, Nothing>& handle_wm_paint() {
 	return map(handle_wm_paint_helper);
+}
+
+template<class FUNCTIONAL> Nothing handle_wm_paint_helper2(FUNCTIONAL functional, MSG msg) {
+	PAINTSTRUCT ps;
+	HDC dc;
+
+	if (msg.message == WM_PAINT) {
+		wm_paint_handler = functional;
+	}
+
+	return Nothing();
+}
+
+template<class FUNCTIONAL> Transfer<MSG, Nothing>& handle_wm_paint2(FUNCTIONAL functional) {
+	std::function<Nothing(MSG)> _f(std::bind(handle_wm_paint_helper2<FUNCTIONAL>, functional, _1));
+	
+	return map(_f);
 }
 
 template<class T, class U, class RHS_FUNCTIONAL> T compose_fn_helper(std::function<T(U)> f1, RHS_FUNCTIONAL f2, U x) {
