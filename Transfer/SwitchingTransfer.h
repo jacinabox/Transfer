@@ -81,6 +81,7 @@ public:
 	//it returns the transfer being switched to, from transduce.
 	SwitchingTransfer(std::auto_ptr<Transfer<I, O> > _transfer,
 		std::function<std::auto_ptr<Transfer<I, O> >(I)> _transfer_f) : transfer(_transfer), transfer_f(_transfer_f) {
+		assert(transfer.get());
 	}
 
 	virtual ~SwitchingTransfer() {

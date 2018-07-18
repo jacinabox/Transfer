@@ -10,6 +10,12 @@
 
 struct Nothing {};
 
+/*A note on conventions used in this library. When bare references or pointers are given
+as parameters, this implies that ownership of them is scoped to the procedure call. *All*
+cases in which the function/method being called is taking ownership, are informed by
+an auto_ptr type. On the other hand, when pointers or references are returned from a
+function/method, this implies that the caller is taking ownership.*/
+
 template<class I, class O> class Transfer {
 public:
 	Transfer() {
@@ -28,11 +34,12 @@ public:
 	//
 	//The caller must take ownership of the transfer pointer returned, except when the
 	//pointer returned is null. When the pointer returned is null, this indicates that
-	//the calling object can continue to use the transfer object it already has, and
-	//just called.
+	//the calling object should continue to use the transfer object it already has;
+	//the transfer object does not reconstruct itself.
 	//
 	//If a transfer object is non-stateless (as indicated by the result of is_stateless
-	//method), then it may return a stateless object from transduce. If it is stateless,
+	//method), then it may return a stateless object from transduce or it may return
+	//a null pointer. The caller is required to handle both cases. If it is stateless,
 	//transduce must return a null pointer.
 	virtual std::auto_ptr<Transfer<I, O> > transduce(const I& input,
 		std::function<void(const O&)>& sink) const {
