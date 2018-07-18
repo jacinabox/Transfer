@@ -7,6 +7,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <utility>
+#include <functional>
 
 //It constructs a transfer that retrieves messages from the queue of messages coming-
 //into a Windows application. It also discharges the duties of a message loop, dispatching
@@ -25,6 +26,45 @@ Transfer<LPTSTR, BOOL>& set_window_text(HWND hwnd);
 
 //A helper function to construct a frame window with reasonable defaults.
 HWND create_frame_window(LPCTSTR title, HICON icon, HMENU menu);
+
+extern std::function<Nothing(HDC)> wm_paint_handler;
+
+template<class FUNCTIONAL> Nothing handle_wm_paint_helper(std::pair<MSG, FUNCTIONAL> pair) {
+	PAINTSTRUCT ps;
+	HDC dc;
+	
+	if (pair.first.message == WM_PAINT) {
+		wm_paint_handler = pair.second;
+	}
+
+	return Nothing();
+}
+
+template<class FUNCTIONAL> Transfer<std::pair<MSG, FUNCTIONAL>, Nothing>& handle_wm_paint() {
+	return map(handle_wm_paint_helper);
+}
+
+template<class T, class U, class RHS_FUNCTIONAL> T compose_fn_helper(std::function<T(U)> f1, RHS_FUNCTIONAL f2, U x) {
+	f1(x);
+	return f2(x);
+}
+
+typedef std::function<Nothing(HDC)> DRAW_FUNCTION;
+
+//Functions of one argument, compose similarly as the reader modality, although of course
+//there are additional effects stemming from C++ I/O. I use function composition
+//operator to build a mini drawing DSL, which is invoked with handle_wm_paint_helper.
+//It can be said that this definition takes two DRAW_FUNCTIONs as arguments,
+//and returns a composite DRAW_FUNCTION.
+template<class T, class U, class RHS_FUNCTIONAL> std::function<T(U)> operator >>(std::function<T(U)> f1, RHS_FUNCTIONAL f2) {
+	std::function<T(U)> _f(std::bind(compose_fn_helper<T, U, RHS_FUNCTIONAL>, f1, f2, _1));
+
+	return _f;
+}
+
+DRAW_FUNCTION fill_rect(LPCRECT pRect, HBRUSH hBrush);
+DRAW_FUNCTION rectangle(LPCRECT pRect, HPEN hPen, HBRUSH hBrush);
+
 
 #endif
 

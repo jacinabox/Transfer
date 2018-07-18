@@ -13,6 +13,7 @@ using namespace std::placeholders;
 
 static std::list<CWPSTRUCT> messages;
 static bool hook_is_set_flag = false;
+std::function<Nothing(HDC)> wm_paint_handler(null_sink2<HDC>);
 
 static LRESULT WINAPI hook_proc(LONG code, WPARAM wParam, LPARAM lParam) {
 	messages.push_back(*reinterpret_cast<CWPSTRUCT*>(lParam));
@@ -32,7 +33,7 @@ public:
 		MSG msg, msg2;
 		std::list<CWPSTRUCT>::iterator it;
 
-		if (!GetMessage(&msg,NULL,0,0)) throw "Received WM_QUIT message";
+		if (!GetMessage(&msg, NULL, 0, 0)) exit(0);
 
 		while ((it=messages.begin()) != messages.end()) {
 			msg2.hwnd = it->hwnd;
@@ -45,10 +46,11 @@ public:
 			messages.pop_front();
 		}
 
+		//It is ...
+		sink(msg);
+
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
-
-		sink(msg);
 		
 		return std::auto_ptr<Transfer<Nothing, MSG> >(0);
 	}
@@ -122,13 +124,38 @@ Transfer<LPTSTR, BOOL>& set_window_text(HWND hwnd) {
 
 const static TCHAR* w_class_name = _T("_TR_FRAME_WINDOW");
 
+static LRESULT CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
+	PAINTSTRUCT ps;
+	HDC dc;
+
+	switch (message) {
+	case WM_PAINT:
+		dc = BeginPaint(hwnd, &ps);
+
+		//Call user defined-paint function.
+		wm_paint_handler(dc);
+
+		EndPaint(hwnd, &ps);
+
+		break;
+	case WM_SETCURSOR:
+		SetCursor(LoadCursor(NULL, IDC_ARROW));
+		break;
+	case WM_NCDESTROY:
+		PostQuitMessage(0);
+		break;
+	}
+
+	return DefWindowProc(hwnd, message, wParam, lParam);
+}
+
 HWND create_frame_window(LPCTSTR title, HICON icon, HMENU menu) {
 	HINSTANCE inst;
 	WNDCLASS wndclass;
 
 	inst = GetModuleHandle(NULL);
 	wndclass.style = 0;
-	wndclass.lpfnWndProc = DefWindowProc;
+	wndclass.lpfnWndProc = frame_window_proc;
 	wndclass.cbClsExtra = 0;
 	wndclass.cbWndExtra = 0;
 	wndclass.hInstance = inst;
@@ -144,5 +171,31 @@ HWND create_frame_window(LPCTSTR title, HICON icon, HMENU menu) {
 		inst, NULL);
 
 }
+/////////////////////////////////
+
+static Nothing fill_rect_helper(LPCRECT pRect, HBRUSH hBrush, HDC dc) {
+	FillRect(dc, pRect, hBrush);
+	return Nothing();
+}
+
+std::function<Nothing(HDC)> fill_rect(LPCRECT pRect, HBRUSH hBrush) {
+	return std::bind(fill_rect_helper, pRect, hBrush, _1);
+}
+
+static Nothing rectangle_helper(LPCRECT pRect, HPEN hPen, HBRUSH hBrush, HDC dc) {
+	HGDIOBJ hOldPen = SelectObject(dc, hPen);
+	HGDIOBJ hOldBrush = SelectObject(dc, hBrush);
+
+	Rectangle(dc, pRect->left, pRect->top, pRect->right, pRect->bottom);
+	SelectObject(dc, hOldPen);
+	SelectObject(dc, hOldBrush);
+	return Nothing();
+}
+
+std::function<Nothing(HDC)> rectangle(LPCRECT pRect, HPEN hPen, HBRUSH hBrush) {
+	return std::bind(rectangle_helper, pRect, hPen, hBrush, _1);
+}
+
+///std::
 
 #endif

@@ -28,14 +28,7 @@ bool predicate(char x) {
 	return x == 33; //Test for space character.
 }
 
-template<class T, class T2> T const__(T& x, const T2& x2) {
-	return x;
-}
-
 char incr(char c) { return c + 1; }
-
-template<class T> void null_sink(const T& x) {
-}
 
 template<typename I, typename O> auto_ptr<Transfer<I, O> > make_auto_ptr
 (Transfer<I, O>* x) {
@@ -95,13 +88,19 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	HWND hwnd = create_frame_window(_T("Test"), NULL, NULL);
 
 	//In this example, incoming window messages drive a flip-flop, which changes the title bar text.
-	Transfer<Nothing, BOOL>& transfer4 = win32_source() >>
-		scanning(true, flip_flop) >>
-		map(pickMessage) >>
-		set_window_text(hwnd);
+	//There is also a drawing test showing some demonstration of a drawing mini-DSL.
+	RECT rect{ 100, 100, 400, 400 };
+	RECT rect2{ 80, 80, 380, 380 };
+	Transfer<Nothing, Nothing>& transfer4 = win32_source() >>
+		(scanning(true, flip_flop) >>
+			map(pickMessage) >>
+			set_window_text(hwnd) >>
+			map(null_sink2<BOOL>)
+			/*| handle_wm_paint(fill_rect(&rect, static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)))
+				>> fill_rect(&rect2, static_cast<HBRUSH>(GetStockObject(GRAY_BRUSH))))*/);
 
-	Transfer<Nothing, BOOL>::transduce_loop(f0,
-		std::auto_ptr<Transfer<Nothing, BOOL> >(&transfer4),
-		std::function<void(const BOOL&)>(null_sink<BOOL>));
+	Transfer<Nothing, Nothing>::transduce_loop(f0,
+		std::auto_ptr<Transfer<Nothing, Nothing> >(&transfer4),
+		std::function<void(const Nothing&)>(null_sink<Nothing>));
     return 0;
 }

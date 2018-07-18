@@ -118,4 +118,17 @@ template<class I, class O> void ptr_assignment_helper(std::auto_ptr<Transfer<I, 
 	ptr.reset(ptr3.get() ? ptr3.release() : ptr2.release());
 }
 
+////////////////////////////////////
+
+template<class T, class T2> T const__(T& x, const T2& x2) {
+	return x;
+}
+
+template<class T> void null_sink(const T& x) {
+}
+
+template<class T> Nothing null_sink2(T x) {
+	return Nothing();
+}
+
 #endif
