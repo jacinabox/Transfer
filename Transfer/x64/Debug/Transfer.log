@@ -7,7 +7,7 @@ c:\users\james\documents\transfer\transfer\win32transfer.h(48): warning C4101: '
           [
               FUNCTIONAL=std::function<Nothing (HDC)>
           ]
-  c:\users\james\documents\transfer\transfer\transfer.cpp(104): note: see reference to function template instantiation 'Transfer<MSG,Nothing> &handle_wm_paint2<std::function<Nothing (HDC)>>(FUNCTIONAL)' being compiled
+  c:\users\james\documents\transfer\transfer\transfer.cpp(106): note: see reference to function template instantiation 'Transfer<MSG,Nothing> &handle_wm_paint2<std::function<Nothing (HDC)>>(FUNCTIONAL)' being compiled
           with
           [
               FUNCTIONAL=std::function<Nothing (HDC)>

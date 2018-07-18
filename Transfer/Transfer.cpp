@@ -91,6 +91,7 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//There is also a drawing test showing some demonstration of a drawing mini-DSL.
 	RECT rect{ 100, 100, 400, 400 };
 	RECT rect2{ 80, 80, 380, 380 };
+	RECT rect3{ 0, 0, 32767, 32767 };
 	POINT pt{ 80, 380 };
 	POINT pt2{ 380 , 80 };
 	Transfer<Nothing, Nothing>& transfer4 = win32_source() >>
@@ -98,7 +99,8 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			map(pickMessage) >>
 			set_window_text(hwnd) >>
 			map(null_sink2<BOOL>)
-			| handle_wm_paint2(fill_rect(&rect, static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)))
+			| handle_wm_paint2(fill_rect(&rect3, static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)))
+				>> fill_rect(&rect, static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)))
 				>> fill_rect(&rect2, static_cast<HBRUSH>(GetStockObject(GRAY_BRUSH)))
 				>> move_to(&pt)
 				>> line_to(&pt2, static_cast<HPEN>(GetStockObject(WHITE_PEN)))));
