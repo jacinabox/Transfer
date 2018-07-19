@@ -65,19 +65,25 @@ the transfer is suspended.
 In order to reproduce the semantics of feedback, in terms of a standard
 semantics of FRP, it is necessary to reconstruct semantics in the space
 [[T]] -> [[U]]. The tokens of the signals are separated by the input
-token that provokes them. Then feedback could be given the following
+token that provokes them. Then feedback can be given the following
 semantics:
 
-feedback1 :: ([[t]] -> [[t]])
-	-> [[t]] -> [[t]]
-feedback1 f xs =
+zipStreams f (x:xs) ~(y:ys) = f x y : zipStreams f xs ys
+zipStreams _ [] _ = []
+
+type Signal = []
+
+append' x x2 =
+	if null x then
+		x
+	else
+		x++x2
+
+feedback2 :: (Signal[t] -> Signal[t])
+	-> Signal[t] -> Signal[t]
+feedback2 f x =
 	let
-	ls = f xs
-	f2 x = if null x then
-		const x
-		else
-		(++) x
-	in
-	zipWith f2 ls(feedback1 f ls)
-		
+	ls = f(zipStreams append' x ls) in
+	ls
+
 * lazy :: (() -\> (t :-> u)) -\> (t :-> u)
