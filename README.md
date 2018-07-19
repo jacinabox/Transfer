@@ -62,13 +62,19 @@ the transfer is suspended.
 
 * feedback :: (t :-> t) -\> (t :-> t)
 
-Feedback has semantics of the following stream processor f, where f2
-is the stream processor associated with the argument transfer:
+In order to reproduce the semantics of feedback, in terms of a standard
+semantics of FRP, it is necessary to reconstruct semantics in the space
+[[T]] -> [[U]]. The tokens of the signals are separated by the input
+token that provokes them. Then feedback could be given the following
+semantics:
 
-let f f2 (x:xs) =
-	let xs' = f2 x in
-		xs' ++ f f2(xs'++xs)
+zipStreams f (x:xs) ~(y:ys) = f x y : zipStreams f xs ys
+zipStreams _ [] _ = []
 
-let f f2 [] = []
+feedback2 :: ([[t]] -> [[t]])
+	-> [[t]] -> [[t]]
+feedback2 f x =
+	let ls = f(zipStreams(++) x ls) in
+		ls
 
 * lazy :: (() -\> (t :-> u)) -\> (t :-> u)
