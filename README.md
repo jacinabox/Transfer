@@ -32,35 +32,35 @@ program  as described in the code.
 
 ------------------------------------------
 
-Summary of combinators (assume that :~> is a type operator corresponding to
+Summary of combinators (assume that :-> is a type operator corresponding to
 the transfer category). The basic combinators are as follows:
 
-* map :: (t-\>u) -\> (t :~> u)
+* map :: (t-\>u) -\> (t :-> u)
 
-* filter :: (t-\>Bool) -\> (t :~> t)
+* filter :: (t-\>Bool) -\> (t :-> t)
 
-* switch\_once :: (t -\> Maybe(t :~> u), t :~> u) -\> (t :~> u)
+* switch\_once :: (t -\> Maybe(t :-> u), t :-> u) -\> (t :-> u)
 
 'Maybe' is the type constructor of a container, that may or may not contain
 a single value. This combinator is based on the corresponding switching
 combinator of Yampa. 'switch\_once' switches its internal transfer lazily.
 
-* scanning :: (t,(t,u)-\>t) -\> (u :~> t)
+* scanning :: (t,(t,u)-\>t) -\> (u :-> t)
 
 This combinator is derivable from the other combinators.
 
-* with\_remainder :: (t :~> u) -\> (t :~> (t :~> u, u))
+* with\_remainder :: (t :-> u) -\> (t :-> (t :-> u, u))
 
 'with\_remainder' is for making a copy of the present state of the internal
 transfer. Such copy is used to resume the same transfer later. Resuming
 also redoes any effects performed inside the transfer, from the point where
 the transfer is suspended.
 
-* identity :: t :~> t
+* identity :: t :-> t
 
-* empty :: t :~> u
+* empty :: t :-> u
 
-* feedback :: (t :~> t) -\> (t :~> t)
+* feedback :: (t :-> t) -\> (t :-> t)
 
 Feedback has semantics of the following stream processor f, where f2
 is the stream processor associated with the argument transfer:
@@ -71,4 +71,4 @@ let f f2 (x:xs) =
 
 let f f2 [] = []
 
-* lazy :: (() -\> (t :~> u)) -\> (t :~> u)
+* lazy :: (() -\> (t :-> u)) -\> (t :-> u)
