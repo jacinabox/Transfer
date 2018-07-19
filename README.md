@@ -68,6 +68,7 @@ semantics of FRP, it is necessary to reconstruct semantics in the space
 token that provokes them. Then feedback can be given the following
 semantics:
 
+```
 zipStreams f (x:xs) ~(y:ys) = f x y : zipStreams f xs ys
 zipStreams _ [] _ = []
 
@@ -82,5 +83,6 @@ feedback2 f xs =
 	let
 	ls = f(zipStreams append' xs ls) in
 	ls
+```
 
 * lazy :: (() -\> (t :-> u)) -\> (t :-> u)
