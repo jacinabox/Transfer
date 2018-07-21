@@ -109,6 +109,7 @@ template<class I> void feed_sink(Transfer<I, Nothing>& sink, const I& input) {
 class ExampleTransfer : public Transfer<int, int> {
 public:
 	virtual ~ExampleTransfer() {
+
 	}
 
 	virtual std::auto_ptr<Transfer<int, int> > transduce(const int& input,
