@@ -26,6 +26,9 @@ public:
 	virtual Transfer<I, O>* clone() const {
 		return new MapTransfer<I, O, FUNCTIONAL>(functional);
 	}
+	virtual void print_tr_structure() const {
+		std::cout << "map(_)";
+	}
 };
 
 /////////////////////////////////////////

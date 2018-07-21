@@ -39,6 +39,13 @@ public:
 		return new MergeTransfer<I, O>(std::auto_ptr<Transfer<I, O> >(transfer1->clone()),
 			std::auto_ptr<Transfer<I, O> >(transfer2->clone()));
 	}
+	virtual void print_tr_structure() const {
+		std::cout << "(";
+		transfer1->print_tr_structure();
+		std::cout << ") | (";
+		transfer2->print_tr_structure();
+		std::cout << ")";
+	}
 };
 
 ////////////////////////////////

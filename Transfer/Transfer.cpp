@@ -38,13 +38,6 @@ template<typename I, typename O> auto_ptr<Transfer<I, O> > make_auto_ptr
 	return auto_ptr<Transfer<I, O> >(x);
 }
 
-template<class X > Transfer<X, X>& identity_() {
-
-	//Identity wrapper.
-
-	return *new IdentityTransfer<X>();
-}
-
 int _plus(int n, int m) { return n + m; }
 
 bool flip_flop(bool x, MSG msg) {

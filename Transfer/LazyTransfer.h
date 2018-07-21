@@ -37,6 +37,9 @@ public:
 	virtual Transfer<I, O>* clone() const {
 		return new LazyTransfer<I, O> (tf);
 	}
+	virtual void print_tr_structure() const {
+		std::cout << "lazy(_)";
+	}
 };
 
 /////////////////////////////////////

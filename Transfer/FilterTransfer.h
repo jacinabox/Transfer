@@ -31,6 +31,9 @@ public:
 	virtual Transfer<I, I>* clone() const {
 		return new FilterTransfer<I, I_PREDICATE>(predicate);
 	}
+	virtual void print_tr_structure() const {
+		std::cout << "filter(_)";
+	}
 };
 
 /////////////////////////////////////////

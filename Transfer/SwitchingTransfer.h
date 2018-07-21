@@ -107,6 +107,11 @@ public:
 	virtual Transfer<I, O>* clone() const {
 		return new SwitchingTransfer<I, O>(std::auto_ptr<Transfer<I, O> >(transfer->clone()), transfer_f);
 	}
+	virtual void print_tr_transfer() const {
+		std::cout << "switch_once(";
+		transfer->print_tr_structure();
+		std::cout << ",_)";
+	}
 };
 
 ///////////////////////////////////////

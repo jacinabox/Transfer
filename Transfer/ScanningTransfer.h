@@ -28,6 +28,9 @@ public:
 	virtual Transfer<I, T>* clone() const {
 		return new ScanningTransfer<I, T, T_I_FUNCTION>(itl, f);
 	}
+	virtual void print_tr_structure() const {
+		std::cout << "scanning(_,_)";
+	}
 };
 
 

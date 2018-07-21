@@ -48,6 +48,11 @@ public:
 	virtual Transfer<I, WITH_REMAINDER_OUTPUT(I, O)>* clone() const {
 		return new WithRemainderTransfer<I, O>(std::auto_ptr<Transfer<I, O> >(transfer->clone()));
 	}
+	virtual void print_tr_structure() const {
+		std::cout << "with_remainder(";
+		transfer->print_tr_structure();
+		std::cout << ")";
+	}
 };
 
 ///////////////////////////////////////

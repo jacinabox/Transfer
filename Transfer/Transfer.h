@@ -6,6 +6,7 @@
 #include <functional>
 #include <memory>
 #include <assert.h>
+#include <iostream>
 //#include <iostream>
 
 struct Nothing {};
@@ -55,6 +56,12 @@ public:
 	//The clone method must implement copy semantics.
 	virtual Transfer<I, O>* clone() const {
 		return new Transfer<I, O>();
+	}
+
+	//A method for debugging; it prints the overall structure of a transfer,
+	//to help understand the behavior of complex switches.
+	virtual void print_tr_structure() const {
+		std::cout << "Transfer";
 	}
 
 	static void transduce_loop(std::function<I()>& generator,

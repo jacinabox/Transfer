@@ -57,6 +57,9 @@ public:
 	virtual Transfer<Nothing, MSG>* clone() const {
 		return new Win32Transfer();
 	}
+	virtual void print_tr_structure() const {
+		std::cout << "win32_source()";
+	}
 };
 
 //It constructs a transfer that retrieves messages from the queue of messages coming-

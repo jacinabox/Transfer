@@ -54,6 +54,14 @@ public:
 		return new StatelessComposeTransfer<I, O1, O2>(std::auto_ptr<Transfer<I, O1> >(transfer1->clone()),
 			std::auto_ptr<Transfer<O1, O2> >(transfer2->clone()));
 	}
+
+	virtual void print_tr_structure() const {
+		std::cout << "(";
+		transfer1->print_tr_structure();
+		std::cout << ") >>stateless (";
+		transfer2->print_tr_structure();
+		std::cout << ")";
+	}
 };
 
 

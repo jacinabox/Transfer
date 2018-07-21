@@ -18,8 +18,18 @@ public:
 	virtual Transfer<X, X>* clone() const {
 		return new IdentityTransfer<X>();
 	}
+	virtual void print_tr_structure() const {
+		std::cout << "identity_()";
+	}
 };
 
 //////////////////////////////////////////
+
+template<class X > Transfer<X, X>& identity_() {
+
+	//Identity wrapper.
+
+	return *new IdentityTransfer<X>();
+}
 
 #endif

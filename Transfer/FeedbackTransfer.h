@@ -46,6 +46,11 @@ public:
 	virtual Transfer<X, X>* clone() const {
 		return new FeedbackTransfer(std::auto_ptr<Transfer<X, X> >(transfer->clone()));
 	}
+	virtual void print_tr_structure() const {
+		std::cout << "feedback(";
+		transfer->print_tr_structure();
+		std::cout << ")";
+	}
 
 };
 
