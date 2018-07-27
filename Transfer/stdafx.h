@@ -28,6 +28,7 @@
 #include "Miscellaneous.h"
 #include "FileTransfer.h"
 #include "Win32Transfer.h"
+#include "Win32Auxiliary.h"
 #include <memory>
 #include <functional>
 

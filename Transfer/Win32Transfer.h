@@ -25,9 +25,28 @@ Transfer<MSG, LRESULT>& send_message();
 Transfer<MSG, BOOL>& post_message();
 Transfer<std::basic_string<char>, BOOL>& set_window_text(HWND hwnd);
 Transfer<Nothing, std::basic_string<char> >& get_window_text(HWND hwnd);
+Transfer<MSG, MSG>& filter_wparam(WPARAM wParam);
+
+
+
+Transfer<MSG, MSG>& filter_lparam(LPARAM lPam);
+Transfer<RECT, Nothing>& resize_window(HWND hWnd);
+Transfer<int, Nothing>& set_selected_item(HWND hListControl);
+
+
 
 //A helper function to construct a frame window with reasonable defaults.
 HWND create_frame_window(LPCTSTR title, HICON icon, HMENU menu);
+
+struct WINDOW_INFO {
+	char class_name[128];
+	RECT rect;
+	LPCSTR text;
+	int id;
+	HWND hWndParent;
+};
+
+Transfer<WINDOW_INFO, HWND>& create_control();
 
 extern std::function<Nothing(HDC)> wm_paint_handler;
 
@@ -85,6 +104,7 @@ DRAW_FUNCTION fill_rect(LPCRECT pRect, HBRUSH hBrush);
 DRAW_FUNCTION rectangle(LPCRECT pRect, HPEN hPen, HBRUSH hBrush);
 DRAW_FUNCTION move_to(const POINT* pPoint);
 DRAW_FUNCTION line_to(const POINT* pPoint, HPEN hPen);
+DRAW_FUNCTION ellipse(LPCRECT pRect, HPEN hPen, HBRUSH hBrush);
 
 #endif
 

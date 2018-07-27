@@ -13,10 +13,35 @@ using namespace std::placeholders;
 
 static std::list<CWPSTRUCT> messages;
 static bool hook_is_set_flag = false;
+//static RECT window_rect = { 0 };
+static bool loop_protect_flag = false;
+
+static HFONT default_font = CreateFontA(14,
+	0,
+	0,
+	0,
+	FW_NORMAL,
+	0,
+	0,
+	0,
+	ANSI_CHARSET,
+	OUT_DEFAULT_PRECIS,
+	CLIP_DEFAULT_PRECIS,
+	DEFAULT_QUALITY,
+	FF_MODERN,
+	"Tahoma"
+);
+
 std::function<Nothing(HDC)> wm_paint_handler(null_sink2<HDC>);
 
 static LRESULT WINAPI hook_proc(LONG code, WPARAM wParam, LPARAM lParam) {
-	messages.push_back(*reinterpret_cast<CWPSTRUCT*>(lParam));
+	//Loop protection: don't record messages when loop protect is enabled.
+	//Loop protection takes advantage of the way message sending works in Win32;
+	//when user code triggers a sent message, the window procedure is called
+	//directly; so I can think of intervals of loop protection as being bracketed
+	//by the call in user code.
+	if (!loop_protect_flag)
+		messages.push_back(*reinterpret_cast<CWPSTRUCT*>(lParam));
 
 	return CallNextHookEx(NULL, code, wParam, lParam);
 }
@@ -77,7 +102,7 @@ Transfer<Nothing, MSG>& win32_source() {
 
 ////////////////////////////////
 
-bool filter_helper1(HWND hwnd, MSG msg) {
+static bool filter_helper1(HWND hwnd, MSG msg) {
 	return hwnd == msg.hwnd;
 }
 
@@ -87,7 +112,7 @@ Transfer<MSG, MSG>& filter_hwnd(HWND hwnd) {
 	return filter(predicate);
 }
 
-bool filter_helper2(int code, MSG msg) {
+static bool filter_helper2(int code, MSG msg) {
 	return code == msg.message;
 }
 
@@ -97,7 +122,7 @@ Transfer<MSG, MSG>& filter_code(int code) {
 	return filter(predicate);
 }
 
-LRESULT send_helper(MSG msg) {
+static LRESULT send_helper(MSG msg) {
 	return SendMessage(msg.hwnd, msg.message, msg.wParam, msg.lParam);
 }
 
@@ -105,7 +130,7 @@ Transfer<MSG, LRESULT>& send_message() {
 	return map(send_helper);
 }
 
-BOOL post_helper(MSG msg) {
+static BOOL post_helper(MSG msg) {
 	return PostMessage(msg.hwnd, msg.message, msg.wParam, msg.lParam);
 }
 
@@ -114,7 +139,15 @@ Transfer<MSG, BOOL>& post_message() {
 }
 
 static BOOL set_window_text_helper(HWND hwnd, std::basic_string<char> s) {
-	return SetWindowTextA(hwnd, s.c_str());
+	BOOL b;
+	
+	loop_protect_flag = true;
+
+	b = SetWindowTextA(hwnd, s.c_str());
+
+	loop_protect_flag = false;
+
+	return b;
 }
 
 Transfer<std::basic_string<char>, BOOL>& set_window_text(HWND hwnd) {
@@ -138,6 +171,58 @@ Transfer<Nothing, std::basic_string<char> >& get_window_text(HWND hwnd) {
 	return map(f);
 }
 
+
+static bool filter_helper3(WPARAM wParam, MSG msg) {
+	return wParam == msg.wParam;
+}
+
+Transfer<MSG, MSG>& filter_wparam(WPARAM wParam) {
+	std::function<bool(MSG)> predicate(std::bind(filter_helper3, wParam, _1));
+
+	return filter(predicate);
+}
+
+static bool filter_helper4(LPARAM lParam, MSG msg) {
+	return lParam == msg.lParam;
+}
+
+Transfer<MSG, MSG>& filter_lparam(LPARAM lParam) {
+	std::function<bool(MSG)> predicate(std::bind(filter_helper4, lParam, _1));
+
+	return filter(predicate);
+}
+
+static Nothing resize_window_helper(HWND hWnd, RECT rect) {
+	//Set loop protect.
+	loop_protect_flag = true;
+
+	SetWindowPos(hWnd, 0, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
+		SWP_NOZORDER | SWP_NOACTIVATE);
+
+	loop_protect_flag = false;
+
+	return Nothing();
+}
+
+Transfer<RECT, Nothing>& resize_window(HWND hWnd) {
+	std::function<Nothing(RECT)> _f(std::bind(resize_window_helper, hWnd, _1));
+
+	return map(_f);
+}
+
+Nothing set_selected_item_helper(HWND hListControl, int index) {
+	loop_protect_flag = true;
+	SendMessage(hListControl, LB_SETCURSEL, index, 0);
+	loop_protect_flag = false;
+	return Nothing();
+}
+
+Transfer<int, Nothing>& set_selected_item(HWND hListControl) {
+	std::function<Nothing(int)> _f(std::bind(set_selected_item_helper, hListControl, _1));
+
+	return map(_f);
+}
+
 ///////////////////////////////////////
 
 const static TCHAR* w_class_name = _T("_TR_FRAME_WINDOW");
@@ -145,6 +230,7 @@ const static TCHAR* w_class_name = _T("_TR_FRAME_WINDOW");
 static LRESULT CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	PAINTSTRUCT ps;
 	HDC dc;
+	WINDOWPOS* wpp;
 
 	switch (message) {
 	case WM_PAINT:
@@ -156,6 +242,21 @@ static LRESULT CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam
 		EndPaint(hwnd, &ps);
 
 		break;
+	/*case WM_WINDOWPOSCHANGING:
+		wpp = reinterpret_cast<WINDOWPOS*>(lParam);
+		window_rect.left = wpp->x;
+		window_rect.top = wpp->y;
+		window_rect.right = wpp->x + wpp->cx;
+		window_rect.bottom = wpp->y + wpp->cy;
+
+		break;
+	case WM_WINDOWPOSCHANGED:
+		wpp = reinterpret_cast<WINDOWPOS*>(lParam);
+		wpp->x = window_rect.left;
+		wpp->y = window_rect.top;
+		wpp->cx = window_rect.right - window_rect.left;
+		wpp->cy = window_rect.bottom - window_rect.top;
+		break;*/
 	case WM_SETCURSOR:
 		SetCursor(LoadCursor(NULL, IDC_ARROW));
 		break;
@@ -184,7 +285,7 @@ HWND create_frame_window(LPCTSTR title, HICON icon, HMENU menu) {
 	wndclass.lpszClassName = w_class_name;
 	
 	RegisterClass(&wndclass);
-	return CreateWindowEx(0, w_class_name, title, WS_VISIBLE | WS_OVERLAPPEDWINDOW,
+	return CreateWindowEx(0, w_class_name, title, WS_VISIBLE | WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, menu,
 		inst, NULL);
 
@@ -235,6 +336,69 @@ DRAW_FUNCTION line_to(const POINT* pPoint, HPEN hPen) {
 	return std::bind(line_to_helper, pPoint, hPen, _1);
 }
 
-///std::
+static Nothing ellipse_helper(LPCRECT pRect, HPEN hPen, HBRUSH hBrush, HDC dc) {
+	HGDIOBJ hOldPen = SelectObject(dc, hPen);
+	HGDIOBJ hOldBrush = SelectObject(dc, hBrush);
+
+	Ellipse(dc, pRect->left, pRect->top, pRect->right, pRect->bottom);
+	SelectObject(dc, hOldPen);
+	SelectObject(dc, hOldBrush);
+	return Nothing();
+}
+
+std::function<Nothing(HDC)> ellipse(LPCRECT pRect, HPEN hPen, HBRUSH hBrush) {
+	return std::bind(ellipse_helper, pRect, hPen, hBrush, _1);
+}
+
+/////////////////////////////////////////
+
+/*static RECT get_window_rectangle_changes_helper(std::function<RECT(RECT)> update_f, MSG msg) {
+	//Give the update function a chance to *update*, the rectangle, in the manner implied
+	//by the documentation for WM_WINDOWPOSCHANGING.
+
+
+}
+
+Transfer<MSG, RECT>& get_window_rectangle_changes(HWND hWnd, std::function<RECT(RECT)> update_f=std::function<RECT(RECT)>(identity__<RECT>)) {
+	std::function<RECT(MSG)> _f(std::bind(get_window_rectangle_changes_helper, update_f, _1));
+
+	//	Something to think about around intercepting and overriding change
+	//messages....
+	return filter_code(WM_WINDOWPOSCHANGED) >>
+		filter_hwnd(hWnd) >>
+		map(_f);
+}*/
+
+///////////////////////////////////////////
+
+//Idea: In a dialog box, you don't hardly ever want to have two controls with the
+//same id. Why not check to see if a control exists with the given id, and if
+//not then create it to specifications.
+
+static HWND create_control_helper(WINDOW_INFO window_info) {
+	HWND hWnd;
+
+	//loop_protect_flag = true;
+
+	if (!(hWnd = GetDlgItem(window_info.hWndParent, window_info.id))) {
+		hWnd = CreateWindowExA(0, window_info.class_name, window_info.text, WS_CHILDWINDOW | WS_VISIBLE,
+			window_info.rect.left, window_info.rect.top, window_info.rect.right - window_info.rect.left, window_info.rect.bottom - window_info.rect.top,
+			window_info.hWndParent, 0, 0, 0);
+
+		//Set an acceptable font.
+		SendMessage(hWnd, WM_SETFONT, reinterpret_cast<WPARAM>(default_font), 0);
+
+		SetWindowLong(hWnd, GWL_ID, window_info.id);
+	}
+
+	//loop_protect_flag = false;
+
+	return hWnd;
+}
+
+//Returns the handle of the window created.
+Transfer<WINDOW_INFO, HWND>& create_control() {
+	return map(create_control_helper);
+}
 
 #endif

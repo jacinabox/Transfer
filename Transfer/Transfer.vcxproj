@@ -154,6 +154,7 @@
     <ClInclude Include="SwitchingTransfer.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Transfer.h" />
+    <ClInclude Include="Win32Auxiliary.h" />
     <ClInclude Include="Win32Transfer.h" />
     <ClInclude Include="WithRemainderTransfer.h" />
   </ItemGroup>
@@ -165,6 +166,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Transfer.cpp" />
+    <ClCompile Include="Win32Auxiliary.cpp" />
     <ClCompile Include="Win32Transfer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

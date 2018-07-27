@@ -84,14 +84,29 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//There is also a drawing test showing some demonstration of a drawing mini-DSL.
 	RECT rect{ 100, 100, 400, 400 };
 	RECT rect2{ 80, 80, 380, 380 };
-	RECT rect3{ 0, 0, 32767, 32767 };
+	RECT rect3{ 0, 0, 640, 480 };
 	POINT pt{ 80, 380 };
 	POINT pt2{ 380 , 80 };
+	WINDOW_INFO window_info{ "BUTTON", { 10,10, 200,40}, "Test", 1, hwnd };
+	std::function<RECT(MSG)> _f_a(std::bind(const__<RECT, MSG>, rect3, _1));
+	std::function<WINDOW_INFO(MSG)> _f_b(std::bind(const__ < WINDOW_INFO, MSG>, window_info, _1));
 	Transfer<Nothing, Nothing>& transfer4 = win32_source() >>
-		(scanning(true, flip_flop) >>
+		(filter_code(WM_LBUTTONDOWN) >>
+			scanning(true, flip_flop) >>
 			map(pickMessage) >>
 			set_window_text(hwnd) >>
 			map(null_sink2<BOOL>)
+
+			//Vertical pipes (for disjunctive composition) visually indicate the various separate
+			//responsibilities of a transfer network, and are highly compositional.
+			| map(_f_a) >>
+			resize_window(hwnd)
+
+			//Test to create controls.
+			| map(_f_b) >>
+			create_control() >>
+			map(null_sink2<HWND>)
+
 			| handle_wm_paint2(fill_rect(&rect3, static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)))
 				>> fill_rect(&rect, static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)))
 				>> fill_rect(&rect2, static_cast<HBRUSH>(GetStockObject(GRAY_BRUSH)))
