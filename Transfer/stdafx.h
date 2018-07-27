@@ -27,6 +27,7 @@
 #include "FeedbackTransfer.h"
 #include "Miscellaneous.h"
 #include "FileTransfer.h"
+//#include "win32_swlp_map.h"
 #include "Win32Transfer.h"
 #include "Win32Auxiliary.h"
 #include <memory>

@@ -35,15 +35,28 @@ static HFONT default_font = CreateFontA(14,
 std::function<Nothing(HDC)> wm_paint_handler(null_sink2<HDC>);
 
 static LRESULT WINAPI hook_proc(LONG code, WPARAM wParam, LPARAM lParam) {
-	//Loop protection: don't record messages when loop protect is enabled.
+	CWPSTRUCT* cwp_p = reinterpret_cast<CWPSTRUCT*>(lParam);
+
+	//Loop protection: messages are not recorded when loop protection is enabled.
 	//Loop protection takes advantage of the way message sending works in Win32;
 	//when user code triggers a sent message, the window procedure is called
-	//directly; so I can think of intervals of loop protection as being bracketed
-	//by the call in user code.
+	//directly; so I can think of intervals of loop protection as bracketing the call
+	//in user code.
 	if (!loop_protect_flag)
-		messages.push_back(*reinterpret_cast<CWPSTRUCT*>(lParam));
+		messages.push_back(*cwp_p);
+
+
+
+	//Certain tasks can only be performed within the scope of the window procedure.
+	//For that we can use message hooks.
+	//SWLP_MAP_INTERFACE* smi_p = swlp_map_retrieve(cwp_p->hwnd);
+
+	//if (smi_p) (*smi_p)(cwp_p);
+
+
 
 	return CallNextHookEx(NULL, code, wParam, lParam);
+
 }
 
 class Win32Transfer : public Transfer<Nothing, MSG> {
