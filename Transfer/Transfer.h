@@ -127,7 +127,7 @@ template<class I, class O> void ptr_assignment_helper(std::auto_ptr<Transfer<I, 
 
 ////////////////////////////////////
 
-template<class T, class T2> T const__(T& x, const T2& x2) {
+template<class T, class T2> T const__(T x, const T2& x2) {
 	return x;
 }
 

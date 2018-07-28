@@ -21,12 +21,15 @@ Transfer<Nothing, MSG>& win32_source();
 //Miscellaneous helpers which are used for processing messages.
 Transfer<MSG, MSG>& filter_hwnd(HWND hwnd);
 Transfer<MSG, MSG>& filter_code(int code);
+//Filter out messages the codes of which lie outside of the half-open
+//range [code1,code2). This is occasionally useful when handling
+//user-defined message codes.
+Transfer<MSG, MSG>& filter_code_in_range(int code1, int code2);
 Transfer<MSG, LRESULT>& send_message();
 Transfer<MSG, BOOL>& post_message();
 Transfer<std::basic_string<char>, BOOL>& set_window_text(HWND hwnd);
 Transfer<Nothing, std::basic_string<char> >& get_window_text(HWND hwnd);
 Transfer<MSG, MSG>& filter_wparam(WPARAM wParam);
-
 
 
 Transfer<MSG, MSG>& filter_lparam(LPARAM lPam);
@@ -47,6 +50,11 @@ struct WINDOW_INFO {
 };
 
 Transfer<WINDOW_INFO, HWND>& create_control();
+Transfer<Nothing, HWND>& create_control2(char class_name[128],
+	RECT rect,
+	LPCSTR text,
+	int id,
+	HWND hWndParent);
 
 extern std::function<Nothing(HDC)> wm_paint_handler;
 

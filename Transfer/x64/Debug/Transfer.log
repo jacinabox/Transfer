@@ -1,24 +1,6 @@
-﻿  stdafx.cpp
-c:\users\james\documents\transfer\transfer\filetransfer.h(37): warning C4002: too many actual parameters for macro 'map'
-  Win32Transfer.cpp
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(246): warning C4101: 'wpp': unreferenced local variable
-  Win32Auxiliary.cpp
-  Transfer.cpp
-c:\users\james\documents\transfer\transfer\transfer.cpp(16): warning C4996: 'getch': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _getch. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.14393.0\ucrt\conio.h(452): note: see declaration of 'getch'
-c:\users\james\documents\transfer\transfer\win32transfer.h(69): warning C4101: 'ps': unreferenced local variable
-  c:\users\james\documents\transfer\transfer\win32transfer.h(80): note: see reference to function template instantiation 'Nothing handle_wm_paint_helper2<FUNCTIONAL>(FUNCTIONAL,MSG)' being compiled
-          with
-          [
-              FUNCTIONAL=std::function<Nothing (HDC)>
-          ]
-  c:\users\james\documents\transfer\transfer\transfer.cpp(114): note: see reference to function template instantiation 'Transfer<MSG,Nothing> &handle_wm_paint2<std::function<Nothing (HDC)>>(FUNCTIONAL)' being compiled
-          with
-          [
-              FUNCTIONAL=std::function<Nothing (HDC)>
-          ]
-c:\users\james\documents\transfer\transfer\win32transfer.h(70): warning C4101: 'dc': unreferenced local variable
-  Generating Code...
-  LINK : C:\Users\james\Documents\Transfer\x64\Debug\Transfer.exe not found or not built by the last incremental link; performing full link
+﻿  Win32Transfer.cpp
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(129): warning C4018: '<=': signed/unsigned mismatch
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(129): warning C4018: '<': signed/unsigned mismatch
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(252): warning C4101: 'wpp': unreferenced local variable
   Transfer.vcxproj -> C:\Users\james\Documents\Transfer\x64\Debug\Transfer.exe
   Transfer.vcxproj -> C:\Users\james\Documents\Transfer\x64\Debug\Transfer.pdb (Partial PDB)

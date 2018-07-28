@@ -125,13 +125,19 @@ Transfer<MSG, MSG>& filter_hwnd(HWND hwnd) {
 	return filter(predicate);
 }
 
-static bool filter_helper2(int code, MSG msg) {
-	return code == msg.message;
+static bool filter_helper2(int code1, int code2, MSG msg) {
+	return code1 <= msg.message && msg.message < code2;
 }
 
 Transfer<MSG, MSG>& filter_code(int code) {
-	std::function<bool(MSG)> predicate(std::bind(filter_helper2, code, _1));
+	std::function<bool(MSG)> predicate(std::bind(filter_helper2, code, 1+code, _1));
 	
+	return filter(predicate);
+}
+
+Transfer<MSG, MSG>& filter_code_in_range(int code1, int code2) {
+	std::function<bool(MSG)> predicate(std::bind(filter_helper2, code1, code2, _1));
+
 	return filter(predicate);
 }
 
@@ -412,6 +418,20 @@ static HWND create_control_helper(WINDOW_INFO window_info) {
 //Returns the handle of the window created.
 Transfer<WINDOW_INFO, HWND>& create_control() {
 	return map(create_control_helper);
+}
+
+Transfer<Nothing, HWND>& create_control2(char class_name[128], RECT rect, LPCSTR text, int id, HWND hWndParent) {
+	WINDOW_INFO wi;
+
+	memcpy(wi.class_name, class_name, sizeof(class_name));
+	wi.rect = rect;
+	wi.text = text;
+	wi.id = id;
+	wi.hWndParent = hWndParent;
+
+	std::function<WINDOW_INFO(Nothing)> _f(std::bind(const__<WINDOW_INFO, Nothing>, wi, _1));
+
+	return map(_f) >> create_control();
 }
 
 #endif
