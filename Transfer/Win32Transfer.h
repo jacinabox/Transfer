@@ -116,4 +116,7 @@ DRAW_FUNCTION ellipse(LPCRECT pRect, HPEN hPen, HBRUSH hBrush);
 
 #endif
 
+void set_window_hook(HWND hWnd, std::function<void(const CWPSTRUCT*)> f);
+//void set_window_is_dialog(HWND hWnd);
+
 #endif

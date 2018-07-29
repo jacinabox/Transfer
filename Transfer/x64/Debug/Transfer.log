@@ -1,6 +1,0 @@
-﻿  Win32Transfer.cpp
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(139): warning C4018: '<=': signed/unsigned mismatch
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(139): warning C4018: '<': signed/unsigned mismatch
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(271): warning C4101: 'wpp': unreferenced local variable
-  Transfer.vcxproj -> C:\Users\james\Documents\Transfer\x64\Debug\Transfer.exe
-  Transfer.vcxproj -> C:\Users\james\Documents\Transfer\x64\Debug\Transfer.pdb (Partial PDB)

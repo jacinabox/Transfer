@@ -34,7 +34,7 @@ public:
 /////////////////////////////////////////
 
 template<class FUNCTIONAL> Transfer<typename FUNCTIONAL::argument_type, typename FUNCTIONAL::result_type>&
-	map_(FUNCTIONAL functional) {
+	___map_impl(FUNCTIONAL functional) {
 	return *new MapTransfer<typename FUNCTIONAL::argument_type,
 		typename FUNCTIONAL::result_type,
 		FUNCTIONAL>(functional);
@@ -52,6 +52,6 @@ template<class FUNCTION_TYPE> FUNCTION_TYPE make_function(FUNCTION_TYPE function
 	return functional;
 }
 
-#define map(FUNCTIONAL) (map_(make_function(FUNCTIONAL)))
+#define map(FUNCTIONAL) (___map_impl(make_function(FUNCTIONAL)))
 
 #endif

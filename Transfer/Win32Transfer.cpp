@@ -1,13 +1,18 @@
 
 #include "stdafx.h"
+#undef map
 #include <list>
 #include <iterator>
 #include <functional>
 #include <memory>
+#include <map>
+#include <assert.h>
 #include "Win32Transfer.h"
 #include "Transfer.h"
 
 #ifdef WIN32
+
+//#define ___map_impl(FUNCTIONAL) (map_(make_function(FUNCTIONAL)))
 
 using namespace std::placeholders;
 
@@ -15,6 +20,9 @@ static std::list<CWPSTRUCT> messages;
 static bool hook_is_set_flag = false;
 //static RECT window_rect = { 0 };
 static bool loop_protect_flag = false;
+//static std::map<HWND, Nothing> window_is_dialog_mp;
+#define SWLP_MAP_INTERFACE std::map<HWND, std::function<void(const CWPSTRUCT*)> >
+static SWLP_MAP_INTERFACE window_hook_mp;
 
 static HFONT default_font = CreateFontA(14,
 	0,
@@ -48,12 +56,19 @@ static LRESULT WINAPI hook_proc(LONG code, WPARAM wParam, LPARAM lParam) {
 
 
 	//Certain tasks can only be performed within the scope of the window procedure.
-	//For that we can use message hooks.
-	//SWLP_MAP_INTERFACE* smi_p = swlp_map_retrieve(cwp_p->hwnd);
+	//For this we can use a hook mechanism.
+	SWLP_MAP_INTERFACE::iterator it = window_hook_mp.find(cwp_p->hwnd);
 
-	//if (smi_p) (*smi_p)(cwp_p);
+	if (it!=window_hook_mp.end()) it->second(cwp_p);
+
 
 	//MessageBox(NULL, _T("Test"), 0, 0);
+	//Let's free up entries of these maps upon encountering WM_NCDESTROY message.
+	if (cwp_p->message == WM_NCDESTROY) {
+		//window_is_dialog_mp.erase(cwp_p->hwnd);
+		window_hook_mp.erase(cwp_p->hwnd);
+
+	}
 
 	return CallNextHookEx(NULL, code, wParam, lParam);
 
@@ -87,8 +102,16 @@ public:
 		//It is ...
 		sink(msg);
 
+<<<<<<< HEAD
 		if ((GetWindowLong(msg.hwnd, GWL_STYLE) & WS_CHILD) ||
 			!IsDialogMessage(msg.hwnd, &msg)) {
+=======
+		//assert(GetParent(msg.hwnd) == GetOwner(msg.hwnd));
+		//if (window_is_dialog_mp.find(msg.hwnd)==window_is_dialog_mp.end()
+			//&& window_is_dialog_mp.find(GetParent(msg.hwnd))==window_is_dialog_mp.end()
+		if ((GetWindowLong(msg.hwnd, GWL_STYLE) & WS_CHILD)
+			|| !IsDialogMessage(msg.hwnd, &msg)) {
+>>>>>>> No Mas.
 
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
@@ -156,7 +179,9 @@ static LRESULT send_helper(MSG msg) {
 }
 
 Transfer<MSG, LRESULT>& send_message() {
-	return map(send_helper);
+	std::function<LRESULT(MSG)> _f(send_helper);
+
+	return ___map_impl(_f);
 }
 
 static BOOL post_helper(MSG msg) {
@@ -164,7 +189,9 @@ static BOOL post_helper(MSG msg) {
 }
 
 Transfer<MSG, BOOL>& post_message() {
-	return map(post_helper);
+	std::function<BOOL(MSG)> _f(post_helper);
+
+	return ___map_impl(_f);
 }
 
 static BOOL set_window_text_helper(HWND hwnd, std::basic_string<char> s) {
@@ -182,7 +209,7 @@ static BOOL set_window_text_helper(HWND hwnd, std::basic_string<char> s) {
 Transfer<std::basic_string<char>, BOOL>& set_window_text(HWND hwnd) {
 	std::function<BOOL(std::basic_string<char>)> f(std::bind(set_window_text_helper, hwnd, _1));
 
-	return map(f);
+	return ___map_impl(f);
 }
 
 static std::basic_string<char> get_window_text_helper(HWND hwnd, Nothing _dummy_input) {
@@ -197,7 +224,7 @@ static std::basic_string<char> get_window_text_helper(HWND hwnd, Nothing _dummy_
 Transfer<Nothing, std::basic_string<char> >& get_window_text(HWND hwnd) {
 	std::function<std::basic_string<char>(Nothing)> f(std::bind(get_window_text_helper, hwnd, _1));
 
-	return map(f);
+	return ___map_impl(f);
 }
 
 
@@ -237,7 +264,7 @@ static Nothing resize_window_helper2(HWND hWnd, RECT rect) {
 Transfer<RECT, Nothing>& resize_window2(HWND hWnd) {
 	std::function<Nothing(RECT)> _f(std::bind(resize_window_helper2, hWnd, _1));
 
-	return map(_f);
+	return ___map_impl(_f);
 }
 
 static Nothing resize_window_helper(std::pair<HWND, RECT> pair) {
@@ -258,14 +285,16 @@ Nothing set_selected_item_helper(HWND hListControl, int index) {
 Transfer<int, Nothing>& set_selected_item(HWND hListControl) {
 	std::function<Nothing(int)> _f(std::bind(set_selected_item_helper, hListControl, _1));
 
-	return map(_f);
+	return ___map_impl(_f);
 }
 
 ///////////////////////////////////////
 
-const static TCHAR* w_class_name = _T("_TR_FRAME_WINDOW");
+static LPCTSTR w_class_name = _T("_TR_FRAME_WINDOW");
 
-static LRESULT CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
+static HWND hLastFocusWnd = 0;
+
+INT_PTR CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	PAINTSTRUCT ps;
 	HDC dc;
 	WINDOWPOS* wpp;
@@ -279,9 +308,9 @@ static LRESULT CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam
 
 		EndPaint(hwnd, &ps);
 
-		break;
-	case WM_ERASEBKGND:
-		return reinterpret_cast<LRESULT>(GetStockObject(HOLLOW_BRUSH));
+		return TRUE;
+//	case WM_ERASEBKGND:
+//		return reinterpret_cast<LRESULT>(GetStockObject(HOLLOW_BRUSH));
 		
 		
 		
@@ -293,28 +322,43 @@ static LRESULT CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam
 		
 		
 		
+	case WM_GETDLGCODE:
+		break;
 		
-		
+	case WM_ACTIVATE:
+		SetFocus(hLastFocusWnd);
+		return TRUE;
+	case WM_SETFOCUS:
+		hLastFocusWnd = GetFocus();
+		return TRUE;
+	case DM_GETDEFID: break;
+	case DM_SETDEFID: break;		
 	case WM_SETCURSOR:
 		SetCursor(LoadCursor(NULL, IDC_ARROW));
-		break;
+		return TRUE;
+	case WM_CLOSE:
+		DestroyWindow(hwnd);
+		return TRUE;
 	case WM_NCDESTROY:
 		PostQuitMessage(0);
-		break;
+		return TRUE;
 	}
 
-	return DefWindowProc(hwnd, message, wParam, lParam);
+	return FALSE;
 }
 
 HWND create_frame_window(LPCTSTR title, HICON icon, HMENU menu) {
 	HINSTANCE inst;
-	WNDCLASS wndclass;
+	//WNDCLASS wndclass;
+	DLGTEMPLATE dlgTemplate[5];
+	HWND hWnd;
 
 	inst = GetModuleHandle(NULL);
+
+	/*wndclass.cbClsExtra = 0;
+	wndclass.cbWndExtra = 0; //DLGWINDOWEXTRA;
 	wndclass.style = 0;
 	wndclass.lpfnWndProc = frame_window_proc;
-	wndclass.cbClsExtra = 0;
-	wndclass.cbWndExtra = 0;
 	wndclass.hInstance = inst;
 	wndclass.hIcon = icon;
 	wndclass.hCursor = LoadCursor(inst, IDC_ARROW);
@@ -322,10 +366,26 @@ HWND create_frame_window(LPCTSTR title, HICON icon, HMENU menu) {
 	wndclass.lpszMenuName = NULL;
 	wndclass.lpszClassName = w_class_name;
 	
-	RegisterClass(&wndclass);
-	return CreateWindowEx(0, w_class_name, title, WS_VISIBLE | WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
+	RegisterClass(&wndclass);*/
+
+	/*return CreateWindowEx(0, w_class_name, title, WS_VISIBLE | WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, menu,
-		inst, NULL);
+		inst, NULL);*/
+
+	dlgTemplate[0].style = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN;
+	dlgTemplate[0].dwExtendedStyle = 0;
+	dlgTemplate[0].cdit = 0;
+	dlgTemplate[0].x = CW_DEFAULT;
+	dlgTemplate[0].y = CW_DEFAULT;
+	dlgTemplate[0].cx = CW_DEFAULT;
+	dlgTemplate[0].cy = CW_DEFAULT;
+
+	memset(dlgTemplate + 1, 0, 4 * sizeof(dlgTemplate[0]));
+
+	hWnd = CreateDialogIndirectA(inst, dlgTemplate, NULL, frame_window_proc);
+
+	ShowWindow(hWnd, SW_SHOW);
+	return hWnd;
 
 }
 /////////////////////////////////
@@ -427,6 +487,7 @@ static HWND create_control_helper(WINDOW_INFO window_info) {
 		SendMessage(hWnd, WM_SETFONT, reinterpret_cast<WPARAM>(default_font), 0);
 
 		SetWindowLong(hWnd, GWL_ID, window_info.id);
+		//SetWindowLong(hWnd, GWL_STYLE, WS_CHILDWINDOW | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON);
 	}
 
 	//loop_protect_flag = false;
@@ -436,7 +497,9 @@ static HWND create_control_helper(WINDOW_INFO window_info) {
 
 //Returns the handle of the window created.
 Transfer<WINDOW_INFO, HWND>& create_control() {
-	return map(create_control_helper);
+	std::function<HWND(WINDOW_INFO)> _f(create_control_helper);
+
+	return ___map_impl(_f);
 }
 
 Transfer<Nothing, HWND>& create_control2(char class_name[128], RECT rect, LPCSTR text, int id, HWND hWndParent) {
@@ -450,7 +513,21 @@ Transfer<Nothing, HWND>& create_control2(char class_name[128], RECT rect, LPCSTR
 
 	std::function<WINDOW_INFO(Nothing)> _f(std::bind(const__<WINDOW_INFO, Nothing>, wi, _1));
 
-	return map(_f) >> create_control();
+	return ___map_impl(_f) >> create_control();
 }
+
+//////////////////////////////////////
+
+//This is the interface to this module's hook mechanism.
+void set_window_hook(HWND hWnd, std::function<void(const CWPSTRUCT*)> f) {
+	window_hook_mp.insert(std::make_pair(hWnd, f)); // %
+}
+
+/*
+//...and an interface for indicating that certain windows will act as dialog boxes (eek),
+//causing IsDialogMessage to be called for them in the message loop.
+void set_window_is_dialog(HWND hWnd) {
+	window_is_dialog_mp.insert(std::make_pair(hWnd, Nothing()));
+}*/
 
 #endif
