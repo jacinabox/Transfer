@@ -1,4 +1,47 @@
-﻿  Transfer.cpp
+﻿  stdafx.cpp
+c:\users\james\documents\transfer\transfer\filetransfer.h(37): warning C4002: too many actual parameters for macro 'map'
+  Win32Transfer.cpp
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(65): error C2059: syntax error: '<<'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(70): error C2143: syntax error: missing ';' before '{'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(73): error C2059: syntax error: '<<'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(77): error C2059: syntax error: '>>'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(81): error C2059: syntax error: 'return'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(83): error C2059: syntax error: '}'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(83): error C2143: syntax error: missing ';' before '}'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(85): error C2059: syntax error: 'public'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(85): error C2143: syntax error: missing ';' before '{'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(85): error C2447: '{': missing function header (old-style formal list?)
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(152): error C2061: syntax error: identifier 'Win32Transfer'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(168): warning C4018: '<=': signed/unsigned mismatch
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(168): warning C4018: '<': signed/unsigned mismatch
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(280): error C2059: syntax error: '<<'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(281): error C2143: syntax error: missing ';' before '{'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(281): error C2447: '{': missing function header (old-style formal list?)
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(304): error C2059: syntax error: '<<'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(308): error C2059: syntax error: '=='
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(312): error C2059: syntax error: '>>'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(313): error C2143: syntax error: missing ';' before '{'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(313): error C2447: '{': missing function header (old-style formal list?)
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(404): error C2059: syntax error: '<<'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(406): warning C4305: '=': truncation from 'int' to 'short'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(406): warning C4309: '=': truncation of constant value
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(407): warning C4305: '=': truncation from 'int' to 'short'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(407): warning C4309: '=': truncation of constant value
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(408): warning C4305: '=': truncation from 'int' to 'short'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(408): warning C4309: '=': truncation of constant value
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(409): error C2059: syntax error: '=='
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(414): error C2059: syntax error: '>>'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(418): error C2065: 'frame_window_proc': undeclared identifier
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(550): error C2059: syntax error: '<<'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(560): error C2059: syntax error: '=='
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(561): error C2143: syntax error: missing ';' before '}'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(561): error C2059: syntax error: '}'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(566): error C2143: syntax error: missing ';' before '{'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(566): error C2447: '{': missing function header (old-style formal list?)
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(570): error C2059: syntax error: '>>'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(581): fatal error C1020: unexpected #endif
+  Win32Auxiliary.cpp
+  Transfer.cpp
 c:\users\james\documents\transfer\transfer\transfer.cpp(16): warning C4996: 'getch': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _getch. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.14393.0\ucrt\conio.h(452): note: see declaration of 'getch'
 c:\users\james\documents\transfer\transfer\win32transfer.h(77): warning C4101: 'ps': unreferenced local variable
@@ -7,11 +50,10 @@ c:\users\james\documents\transfer\transfer\win32transfer.h(77): warning C4101: '
           [
               FUNCTIONAL=std::function<Nothing (HDC)>
           ]
-  c:\users\james\documents\transfer\transfer\transfer.cpp(118): note: see reference to function template instantiation 'Transfer<MSG,Nothing> &handle_wm_paint2<std::function<Nothing (HDC)>>(FUNCTIONAL)' being compiled
+  c:\users\james\documents\transfer\transfer\transfer.cpp(116): note: see reference to function template instantiation 'Transfer<MSG,Nothing> &handle_wm_paint2<std::function<Nothing (HDC)>>(FUNCTIONAL)' being compiled
           with
           [
               FUNCTIONAL=std::function<Nothing (HDC)>
           ]
 c:\users\james\documents\transfer\transfer\win32transfer.h(78): warning C4101: 'dc': unreferenced local variable
-  Transfer.vcxproj -> C:\Users\james\Documents\Transfer\x64\Debug\Transfer.exe
-  Transfer.vcxproj -> C:\Users\james\Documents\Transfer\x64\Debug\Transfer.pdb (Partial PDB)
+  Generating Code...

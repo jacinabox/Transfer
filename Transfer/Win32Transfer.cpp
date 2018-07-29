@@ -67,7 +67,6 @@ static LRESULT WINAPI hook_proc(LONG code, WPARAM wParam, LPARAM lParam) {
 	if (cwp_p->message == WM_NCDESTROY) {
 		//window_is_dialog_mp.erase(cwp_p->hwnd);
 		window_hook_mp.erase(cwp_p->hwnd);
-
 	}
 
 	return CallNextHookEx(NULL, code, wParam, lParam);
@@ -283,7 +282,6 @@ Transfer<int, Nothing>& set_selected_item(HWND hListControl) {
 ///////////////////////////////////////
 
 static LPCTSTR w_class_name = _T("_TR_FRAME_WINDOW");
-
 static HWND hLastFocusWnd = 0;
 
 INT_PTR CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -310,9 +308,6 @@ INT_PTR CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARA
 
 		
 	
-		
-		
-		
 		
 	case WM_GETDLGCODE:
 		break;
@@ -506,6 +501,7 @@ Transfer<Nothing, HWND>& create_control2(char class_name[128], RECT rect, LPCSTR
 	std::function<WINDOW_INFO(Nothing)> _f(std::bind(const__<WINDOW_INFO, Nothing>, wi, _1));
 
 	return ___map_impl(_f) >> create_control();
+<<<<<<< HEAD
 }
 
 //////////////////////////////////////
@@ -515,6 +511,17 @@ void set_window_hook(HWND hWnd, std::function<void(const CWPSTRUCT*)> f) {
 	window_hook_mp.insert(std::make_pair(hWnd, f)); // %
 }
 
+=======
+}
+
+//////////////////////////////////////
+
+//This is the interface to this module's hook mechanism.
+void set_window_hook(HWND hWnd, std::function<void(const CWPSTRUCT*)> f) {
+	window_hook_mp.insert(std::make_pair(hWnd, f)); // %
+}
+
+>>>>>>> 9e6cb29baf3399c9b6836ce9157b65c0d629799c
 /*
 //...and an interface for indicating that certain windows will act as dialog boxes (eek),
 //causing IsDialogMessage to be called for them in the message loop.
@@ -522,4 +529,8 @@ void set_window_is_dialog(HWND hWnd) {
 	window_is_dialog_mp.insert(std::make_pair(hWnd, Nothing()));
 }*/
 
+<<<<<<< HEAD
 #endif
+=======
+#endif
+>>>>>>> 9e6cb29baf3399c9b6836ce9157b65c0d629799c
