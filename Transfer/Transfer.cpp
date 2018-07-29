@@ -91,7 +91,7 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	std::function<RECT(MSG)> _f_a(std::bind(const__<RECT, MSG>, rect3, _1));
 	//std::function<WINDOW_INFO(MSG)> _f_b(std::bind(const__ < WINDOW_INFO, MSG>, window_info, _1));
 	Transfer<Nothing, Nothing>& transfer4 = win32_source() >>
-		(filter_code(WM_GETDLGCODE) >>
+		(filter_code(WM_LBUTTONDOWN) >>
 			scanning(true, flip_flop) >>
 			map(pickMessage) >>
 			set_window_text(hwnd) >>
@@ -109,8 +109,8 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			create_control2("BUTTON", { 10,50,200,80 }, "Test 2", 102, hwnd) >>
 			map(null_sink2<HWND>)
 
-			| handle_wm_paint2(fill_rect(&rect3, static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)))
-				>> fill_rect(&rect, static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)))
+			| handle_wm_paint2(/*fill_rect(&rect3, static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)))
+				>> */fill_rect(&rect, static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)))
 				>> fill_rect(&rect2, static_cast<HBRUSH>(GetStockObject(GRAY_BRUSH)))
 				>> move_to(&pt)
 				>> line_to(&pt2, static_cast<HPEN>(GetStockObject(WHITE_PEN)))));

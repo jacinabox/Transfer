@@ -1,15 +1,17 @@
-﻿  Win32Transfer.cpp
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(153): warning C4018: '<=': signed/unsigned mismatch
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(153): warning C4018: '<': signed/unsigned mismatch
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(290): warning C4101: 'wpp': unreferenced local variable
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(365): warning C4305: '=': truncation from 'int' to 'short'
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(365): warning C4309: '=': truncation of constant value
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(366): warning C4305: '=': truncation from 'int' to 'short'
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(366): warning C4309: '=': truncation of constant value
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(367): warning C4305: '=': truncation from 'int' to 'short'
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(367): warning C4309: '=': truncation of constant value
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(368): warning C4305: '=': truncation from 'int' to 'short'
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(368): warning C4309: '=': truncation of constant value
-  LINK : C:\Users\james\Documents\Transfer\x64\Debug\Transfer.exe not found or not built by the last incremental link; performing full link
+﻿  Transfer.cpp
+c:\users\james\documents\transfer\transfer\transfer.cpp(16): warning C4996: 'getch': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _getch. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.14393.0\ucrt\conio.h(452): note: see declaration of 'getch'
+c:\users\james\documents\transfer\transfer\win32transfer.h(77): warning C4101: 'ps': unreferenced local variable
+  c:\users\james\documents\transfer\transfer\win32transfer.h(88): note: see reference to function template instantiation 'Nothing handle_wm_paint_helper2<FUNCTIONAL>(FUNCTIONAL,MSG)' being compiled
+          with
+          [
+              FUNCTIONAL=std::function<Nothing (HDC)>
+          ]
+  c:\users\james\documents\transfer\transfer\transfer.cpp(116): note: see reference to function template instantiation 'Transfer<MSG,Nothing> &handle_wm_paint2<std::function<Nothing (HDC)>>(FUNCTIONAL)' being compiled
+          with
+          [
+              FUNCTIONAL=std::function<Nothing (HDC)>
+          ]
+c:\users\james\documents\transfer\transfer\win32transfer.h(78): warning C4101: 'dc': unreferenced local variable
   Transfer.vcxproj -> C:\Users\james\Documents\Transfer\x64\Debug\Transfer.exe
   Transfer.vcxproj -> C:\Users\james\Documents\Transfer\x64\Debug\Transfer.pdb (Partial PDB)

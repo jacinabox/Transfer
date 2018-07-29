@@ -299,8 +299,8 @@ INT_PTR CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARA
 		EndPaint(hwnd, &ps);
 
 		return TRUE;
-//	case WM_ERASEBKGND:
-//		return reinterpret_cast<LRESULT>(GetStockObject(HOLLOW_BRUSH));
+	/*case WM_ERASEBKGND:
+		return reinterpret_cast<LRESULT>(GetStockObject(WHITE_BRUSH));*/
 		
 		
 		
@@ -371,6 +371,7 @@ HWND create_frame_window(LPCTSTR title, HICON icon, HMENU menu) {
 
 	hWnd = CreateDialogIndirectA(inst, dlgTemplate, NULL, frame_window_proc);
 
+	SetWindowText(hWnd, title);
 	ShowWindow(hWnd, SW_SHOW);
 	return hWnd;
 
