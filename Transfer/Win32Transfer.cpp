@@ -102,16 +102,8 @@ public:
 		//It is ...
 		sink(msg);
 
-<<<<<<< HEAD
-		if ((GetWindowLong(msg.hwnd, GWL_STYLE) & WS_CHILD) ||
-			!IsDialogMessage(msg.hwnd, &msg)) {
-=======
-		//assert(GetParent(msg.hwnd) == GetOwner(msg.hwnd));
-		//if (window_is_dialog_mp.find(msg.hwnd)==window_is_dialog_mp.end()
-			//&& window_is_dialog_mp.find(GetParent(msg.hwnd))==window_is_dialog_mp.end()
 		if ((GetWindowLong(msg.hwnd, GWL_STYLE) & WS_CHILD)
 			|| !IsDialogMessage(msg.hwnd, &msg)) {
->>>>>>> No Mas.
 
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
@@ -272,7 +264,7 @@ static Nothing resize_window_helper(std::pair<HWND, RECT> pair) {
 }
 
 Transfer<std::pair<HWND, RECT>, Nothing>& resize_window() {
-	return map(make_function(resize_window_helper));
+	return ___map_impl(make_function(resize_window_helper));
 }
 
 Nothing set_selected_item_helper(HWND hListControl, int index) {

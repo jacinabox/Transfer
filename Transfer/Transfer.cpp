@@ -109,7 +109,7 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			create_control2("BUTTON", { 10,50,200,80 }, "Test 2", 102, hwnd) >>
 			map(null_sink2<HWND>)
 
-			//| size_to_parent(hwnd)
+			| size_to_parent(hwnd)
 
 			| handle_wm_paint2(fill_rect(&rect3, static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)))
 				>> fill_rect(&rect, static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)))
