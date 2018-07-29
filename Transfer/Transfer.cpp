@@ -79,7 +79,7 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	/////////////////////////////////////////
 
 	HWND hwnd = create_frame_window(_T("Test"), NULL, NULL);
-
+	//set_window_is_dialog(hwnd);
 	//In this example, incoming window messages drive a flip-flop, which changes the title bar text.
 	//There is also a drawing test showing some demonstration of a drawing mini-DSL.
 	RECT rect{ 100, 100, 400, 400 };
@@ -104,9 +104,9 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 			//Test to create controls.
 			| map(null_sink2<MSG>) >>
-			create_control2("BUTTON", { 10,10,200,40 }, "Test", 1, hwnd) >>
+			create_control2("BUTTON", { 10,10,200,40 }, "Test", 100, hwnd) >>
 			map(null_sink2<HWND>) >>
-			create_control2("BUTTON", { 10,50,200,80 }, "Test 2", 2, hwnd) >>
+			create_control2("BUTTON", { 10,50,200,80 }, "Test 2", 102, hwnd) >>
 			map(null_sink2<HWND>)
 
 			| handle_wm_paint2(fill_rect(&rect3, static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)))
