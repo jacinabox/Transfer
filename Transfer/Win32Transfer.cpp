@@ -501,7 +501,6 @@ Transfer<Nothing, HWND>& create_control2(char class_name[128], RECT rect, LPCSTR
 	std::function<WINDOW_INFO(Nothing)> _f(std::bind(const__<WINDOW_INFO, Nothing>, wi, _1));
 
 	return ___map_impl(_f) >> create_control();
-<<<<<<< HEAD
 }
 
 //////////////////////////////////////
@@ -511,26 +510,4 @@ void set_window_hook(HWND hWnd, std::function<void(const CWPSTRUCT*)> f) {
 	window_hook_mp.insert(std::make_pair(hWnd, f)); // %
 }
 
-=======
-}
-
-//////////////////////////////////////
-
-//This is the interface to this module's hook mechanism.
-void set_window_hook(HWND hWnd, std::function<void(const CWPSTRUCT*)> f) {
-	window_hook_mp.insert(std::make_pair(hWnd, f)); // %
-}
-
->>>>>>> 9e6cb29baf3399c9b6836ce9157b65c0d629799c
-/*
-//...and an interface for indicating that certain windows will act as dialog boxes (eek),
-//causing IsDialogMessage to be called for them in the message loop.
-void set_window_is_dialog(HWND hWnd) {
-	window_is_dialog_mp.insert(std::make_pair(hWnd, Nothing()));
-}*/
-
-<<<<<<< HEAD
 #endif
-=======
-#endif
->>>>>>> 9e6cb29baf3399c9b6836ce9157b65c0d629799c
