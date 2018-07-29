@@ -91,7 +91,7 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	std::function<RECT(MSG)> _f_a(std::bind(const__<RECT, MSG>, rect3, _1));
 	//std::function<WINDOW_INFO(MSG)> _f_b(std::bind(const__ < WINDOW_INFO, MSG>, window_info, _1));
 	Transfer<Nothing, Nothing>& transfer4 = win32_source() >>
-		(filter_code(WM_LBUTTONDOWN) >>
+		(filter_code(WM_GETDLGCODE) >>
 			scanning(true, flip_flop) >>
 			map(pickMessage) >>
 			set_window_text(hwnd) >>
@@ -99,8 +99,8 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 			//Vertical pipes (for disjunctive composition) visually indicate the various separate
 			//responsibilities of a transfer network, and are highly compositional.
-			| map(_f_a) >>
-			resize_window(hwnd)
+			| map(_f_a) >> 
+			resize_window2(hwnd)
 
 			//Test to create controls.
 			| map(null_sink2<MSG>) >>
@@ -108,6 +108,8 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			map(null_sink2<HWND>) >>
 			create_control2("BUTTON", { 10,50,200,80 }, "Test 2", 2, hwnd) >>
 			map(null_sink2<HWND>)
+
+			//| size_to_parent(hwnd)
 
 			| handle_wm_paint2(fill_rect(&rect3, static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)))
 				>> fill_rect(&rect, static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)))

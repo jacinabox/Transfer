@@ -53,7 +53,7 @@ static LRESULT WINAPI hook_proc(LONG code, WPARAM wParam, LPARAM lParam) {
 
 	//if (smi_p) (*smi_p)(cwp_p);
 
-
+	//MessageBox(NULL, _T("Test"), 0, 0);
 
 	return CallNextHookEx(NULL, code, wParam, lParam);
 
@@ -67,18 +67,18 @@ public:
 	}
 	virtual std::auto_ptr<Transfer<Nothing, MSG> > transduce(const Nothing& dummy_input,
 		std::function<void(const MSG&)>& sink) const {
-		
+
 		MSG msg, msg2;
 		std::list<CWPSTRUCT>::iterator it;
 
 		if (!GetMessage(&msg, NULL, 0, 0)) exit(0);
 
-		while ((it=messages.begin()) != messages.end()) {
+		while ((it = messages.begin()) != messages.end()) {
 			msg2.hwnd = it->hwnd;
 			msg2.message = it->message;
-			msg2.wParam  = it->wParam;
+			msg2.wParam = it->wParam;
 			msg2.lParam = it->lParam;
-			
+
 			sink(msg2);
 
 			messages.pop_front();
@@ -87,8 +87,12 @@ public:
 		//It is ...
 		sink(msg);
 
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		if ((GetWindowLong(msg.hwnd, GWL_STYLE) & WS_CHILD) ||
+			!IsDialogMessage(msg.hwnd, &msg)) {
+
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 		
 		return std::auto_ptr<Transfer<Nothing, MSG> >(0);
 	}
@@ -105,8 +109,14 @@ public:
 //messages. Note: this type of transfer blocks the caller, and therefore can be
 //used fruitfully in one place in a transfer network.
 Transfer<Nothing, MSG>& win32_source() {
+
 	if (!hook_is_set_flag) {
-		SetWindowsHookEx(WH_CALLWNDPROC, reinterpret_cast<HOOKPROC>(hook_proc), NULL, NULL);
+
+		HINSTANCE hInst = GetModuleHandle(NULL);
+		DWORD i = GetCurrentThreadId();
+		SetWindowsHookEx(WH_CALLWNDPROC, reinterpret_cast<HOOKPROC>(hook_proc), hInst, i);
+		//int y = GetLastError();
+
 		hook_is_set_flag = true;
 	}
 	
@@ -211,7 +221,8 @@ Transfer<MSG, MSG>& filter_lparam(LPARAM lParam) {
 	return filter(predicate);
 }
 
-static Nothing resize_window_helper(HWND hWnd, RECT rect) {
+
+static Nothing resize_window_helper2(HWND hWnd, RECT rect) {
 	//Set loop protect.
 	loop_protect_flag = true;
 
@@ -223,10 +234,18 @@ static Nothing resize_window_helper(HWND hWnd, RECT rect) {
 	return Nothing();
 }
 
-Transfer<RECT, Nothing>& resize_window(HWND hWnd) {
-	std::function<Nothing(RECT)> _f(std::bind(resize_window_helper, hWnd, _1));
+Transfer<RECT, Nothing>& resize_window2(HWND hWnd) {
+	std::function<Nothing(RECT)> _f(std::bind(resize_window_helper2, hWnd, _1));
 
 	return map(_f);
+}
+
+static Nothing resize_window_helper(std::pair<HWND, RECT> pair) {
+	return resize_window_helper2(pair.first, pair.second);
+}
+
+Transfer<std::pair<HWND, RECT>, Nothing>& resize_window() {
+	return map(make_function(resize_window_helper));
 }
 
 Nothing set_selected_item_helper(HWND hListControl, int index) {
@@ -261,21 +280,21 @@ static LRESULT CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam
 		EndPaint(hwnd, &ps);
 
 		break;
-	/*case WM_WINDOWPOSCHANGING:
-		wpp = reinterpret_cast<WINDOWPOS*>(lParam);
-		window_rect.left = wpp->x;
-		window_rect.top = wpp->y;
-		window_rect.right = wpp->x + wpp->cx;
-		window_rect.bottom = wpp->y + wpp->cy;
+	case WM_ERASEBKGND:
+		return reinterpret_cast<LRESULT>(GetStockObject(HOLLOW_BRUSH));
+		
+		
+		
+		
 
-		break;
-	case WM_WINDOWPOSCHANGED:
-		wpp = reinterpret_cast<WINDOWPOS*>(lParam);
-		wpp->x = window_rect.left;
-		wpp->y = window_rect.top;
-		wpp->cx = window_rect.right - window_rect.left;
-		wpp->cy = window_rect.bottom - window_rect.top;
-		break;*/
+		
+	
+		
+		
+		
+		
+		
+		
 	case WM_SETCURSOR:
 		SetCursor(LoadCursor(NULL, IDC_ARROW));
 		break;
@@ -299,7 +318,7 @@ HWND create_frame_window(LPCTSTR title, HICON icon, HMENU menu) {
 	wndclass.hInstance = inst;
 	wndclass.hIcon = icon;
 	wndclass.hCursor = LoadCursor(inst, IDC_ARROW);
-	wndclass.hbrBackground = static_cast<HBRUSH>(GetStockObject(HOLLOW_BRUSH));
+	wndclass.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
 	wndclass.lpszMenuName = NULL;
 	wndclass.lpszClassName = w_class_name;
 	

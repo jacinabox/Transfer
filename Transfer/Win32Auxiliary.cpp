@@ -58,4 +58,34 @@ Transfer<MSG, LRESULT>& get_list_control_changes(HWND hListControl) {
 		map(get_list_control_changes_helper);
 }
 
+
+///////////////////////////////////////
+
+std::pair<HWND, RECT> size_to_parent_helper(HWND hWndParent, MSG msg) {
+	//WINDOWPOS* wpp = reinterpret_cast<WINDOWPOS*>(msg.lParam);
+	RECT rt;
+
+	/*rt.left = wpp->x;
+	rt.top = wpp->y;
+	rt.right = wpp->x + wpp->cx;
+	rt.bottom = wpp->y + wpp->cy;*/
+	GetClientRect(hWndParent, &rt);
+
+	return std::make_pair(GetWindow(hWndParent, GW_CHILD), rt);
+}
+
+/*bool size_to_parent_helper2(HWND hWndParent, MSG msg) {
+return GetWindow(hWndParent, GW_CHILD) == msg.hwnd;
+}*/
+
+Transfer<MSG, Nothing>& size_to_parent(HWND hWndParent) {
+	HWND hWnd = GetWindow(hWndParent, GW_CHILD);
+	std::function<std::pair<HWND, RECT>(MSG)> _f(std::bind(size_to_parent_helper, hWndParent, _1));
+
+	return filter_code(WM_WINDOWPOSCHANGED) >> // %
+		filter_hwnd(hWndParent) >>
+		map(_f) >>
+		resize_window();
+}
+
 #endif

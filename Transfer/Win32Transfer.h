@@ -33,9 +33,9 @@ Transfer<MSG, MSG>& filter_wparam(WPARAM wParam);
 
 
 Transfer<MSG, MSG>& filter_lparam(LPARAM lPam);
-Transfer<RECT, Nothing>& resize_window(HWND hWnd);
+Transfer<std::pair<HWND, RECT>, Nothing>& resize_window();
+Transfer<RECT, Nothing>& resize_window2(HWND hWnd);
 Transfer<int, Nothing>& set_selected_item(HWND hListControl);
-
 
 
 //A helper function to construct a frame window with reasonable defaults.
