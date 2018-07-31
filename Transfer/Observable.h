@@ -9,7 +9,7 @@
 The Observable class, by contrast, is this library's answer to the problem of /abstraction
 inversion/.
 
-If Transfers are arrows, then Observables are contravariant functors.
+If Transfers are arrows, then Observables are co-variant functors.
 
 While both Transfer's "transduce" and Observable's "install_handler" methods receive a functional
 as an argument, the implied lifetimes of these arguments are different. The argument to
@@ -88,7 +88,7 @@ public:
 	}
 };
 
-/* As a contravariant functor, Observables enjoy post-composition of an arrow action, i.e. Transfers.*/
+/* As a co-variant functor, Observables enjoy pre-composition of an arrow action, i.e. Transfers.*/
 template<class I, class O> Observable<O>& operator >>(Observable<I>& Observable, Transfer<I, O>& transfer) {
 	return *new ExtendTransfer<I, O>(std::auto_ptr<Observable<O> >(&Observable),
 		std::auto_ptr<Transfer<I, O> >(&transfer));
