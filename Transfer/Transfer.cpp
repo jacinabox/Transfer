@@ -115,6 +115,8 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 				>> move_to(&pt)
 				>> line_to(&pt2, static_cast<HPEN>(GetStockObject(WHITE_PEN)))));
 
+	std::auto_ptr<Observable<CWPSTRUCT> > observable(&(win32_observable(hwnd) | win32_observable(hwnd)));
+
 	Transfer<Nothing, Nothing>::transduce_loop(f0,
 		std::auto_ptr<Transfer<Nothing, Nothing> >(&transfer4),
 		std::function<void(const Nothing&)>(null_sink<Nothing>));

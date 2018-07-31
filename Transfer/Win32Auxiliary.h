@@ -12,6 +12,10 @@ Transfer<MSG, LRESULT>& get_list_control_changes(HWND hListControl);
 
 Transfer<MSG, Nothing>& size_to_parent(HWND hWndParent);
 
+/*HWND make_list_view_control(HWND hWndParent, std::function<void()>);
+
+}*/
+
 #endif
 
 #endif

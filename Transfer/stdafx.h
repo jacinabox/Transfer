@@ -30,6 +30,8 @@
 //#include "win32_swlp_map.h"
 #include "Win32Transfer.h"
 #include "Win32Auxiliary.h"
+#include "Observable.h"
+#include "Win32Observable.h"
 #include <memory>
 #include <functional>
 

@@ -147,6 +147,7 @@
     <ClInclude Include="MapTransfer.h" />
     <ClInclude Include="MergeTransfer.h" />
     <ClInclude Include="Miscellaneous.h" />
+    <ClInclude Include="Observable.h" />
     <ClInclude Include="ScanningTransfer.h" />
     <ClInclude Include="StatelessComposeTransfer.h" />
     <ClInclude Include="StatelessMergeTransfer.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Transfer.h" />
     <ClInclude Include="Win32Auxiliary.h" />
+    <ClInclude Include="Win32Observable.h" />
     <ClInclude Include="Win32Transfer.h" />
     <ClInclude Include="WithRemainderTransfer.h" />
   </ItemGroup>
@@ -167,6 +169,7 @@
     </ClCompile>
     <ClCompile Include="Transfer.cpp" />
     <ClCompile Include="Win32Auxiliary.cpp" />
+    <ClCompile Include="Win32Observable.cpp" />
     <ClCompile Include="Win32Transfer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
