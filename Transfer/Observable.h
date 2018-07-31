@@ -89,7 +89,7 @@ public:
 };
 
 /* As a contravariant functor, Observables enjoy post-composition of an arrow action, i.e. Transfers.*/
-template<class I, class O> Observable<O>& extend(Observable<I>& Observable, Transfer<I, O>& transfer) {
+template<class I, class O> Observable<O>& operator >>(Observable<I>& Observable, Transfer<I, O>& transfer) {
 	return *new ExtendTransfer<I, O>(std::auto_ptr<Observable<O> >(&Observable),
 		std::auto_ptr<Transfer<I, O> >(&transfer));
 }
