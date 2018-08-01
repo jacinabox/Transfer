@@ -13,10 +13,10 @@ Win32Observable::Win32Observable(HWND _hWnd) : hWnd(_hWnd) {
 Win32Observable::~Win32Observable() {
 }
 
-void Win32Observable::install_handler(std::auto_ptr<std::function<void(const CWPSTRUCT&)> > _sink) {
+void Win32Observable::install_handler(std::function<void(const CWPSTRUCT&)> _sink) {
 	sink = _sink;
 
-	std::function<void(const CWPSTRUCT*)> _f(std::bind(win32_observable_adapter, *sink, _1));
+	std::function<void(const CWPSTRUCT*)> _f(std::bind(win32_observable_adapter, sink, _1));
 
 	set_window_hook(hWnd, _f);
 }

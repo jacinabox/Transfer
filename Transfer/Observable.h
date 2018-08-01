@@ -35,7 +35,7 @@ public:
 	virtual ~Observable() {
 	}
 	/*Installing a handler causes any handler that was already there to be replaced.*/
-	virtual void install_handler(std::auto_ptr<std::function<void(const T&)> > _sink) {
+	virtual void install_handler(std::function<void(const T&)> _sink) {
 	}
 };
 
@@ -49,7 +49,7 @@ public:
 	}
 	virtual ~MergeObservable() {
 	}
-	virtual void install_handler(std::auto_ptr<std::function<void(const T&)> > _sink) {
+	virtual void install_handler(std::function<void(const T&)> _sink) {
 
 		p1->install_handler(_sink);
 		p2->install_handler(_sink);
@@ -64,9 +64,9 @@ template<class T> Observable<T>& operator |(Observable<T>& Observable1, Observab
 //////////////////////////////////////////////
 
 template<class I, class O> void extend_Observable_helper(std::auto_ptr<Transfer<I, O> >* p_transfer,
-	std::auto_ptr<std::function<void(const O&)> > _sink,
+	std::function<void(const O&)> _sink,
 	const I& input) {
-	ptr_assignment_helper(*p_transfer, *p_transfer, (*p_transfer)->transduce(sink, input));
+	ptr_assignment_helper(*p_transfer, *p_transfer, (*p_transfer)->transduce(input, _sink));
 }
 
 template<class I, class O> class ExtendObservable : public Observable<O> {
@@ -81,16 +81,16 @@ public:
 	}
 	virtual ~ExtendObservable() {
 	}
-	virtual void install_handler(std::auto_ptr<std::function<void(const O&)> > _sink) {
-		std::function<void(const O&)> sink2(std::bind(extend_Observable_helper<I, O>, p_transfer, _sink, _1));
+	virtual void install_handler(std::function<void(const O&)> _sink) {
+		std::function<void(const I&)> sink2(std::bind(extend_Observable_helper<I, O>, &p_transfer, _sink, _1));
 
 		p_Observable->install_handler(sink2);
 	}
 };
 
 /* As a co-variant functor, Observables enjoy pre-composition of an arrow action, i.e. Transfers.*/
-template<class I, class O> Observable<O>& operator >>(Observable<I>& Observable, Transfer<I, O>& transfer) {
-	return *new ExtendTransfer<I, O>(std::auto_ptr<Observable<O> >(&Observable),
+template<class I, class O> Observable<O>& operator >>(Observable<I>& observable, Transfer<I, O>& transfer) {
+	return *new ExtendObservable<I, O>(std::auto_ptr<Observable<I> >(&observable),
 		std::auto_ptr<Transfer<I, O> >(&transfer));
 }
 

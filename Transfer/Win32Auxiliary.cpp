@@ -88,4 +88,86 @@ Transfer<MSG, Nothing>& size_to_parent(HWND hWndParent) {
 		resize_window();
 }
 
+class WindowLayoutObject : public LayoutObject {
+protected:
+	HWND hWnd;
+	mutable SIZE sz = { 0 };
+public:
+	WindowLayoutObject(HWND _hWnd) : hWnd(_hWnd) {
+	}
+	virtual ~WindowLayoutObject() {
+	}
+	virtual unsigned get_width() const {
+		RECT rt;
+
+		//The size is cached.
+		if (!sz.cx) {
+			GetClientRect(hWnd, &rt);
+			sz.cx = rt.right;
+			sz.cy = rt.bottom;
+		}
+
+		return sz.cx;
+	}
+	virtual unsigned get_height() const {
+		get_width();
+
+		return sz.cy;
+	}
+	virtual FLOAT_TYPE get_float_type() const {
+		return INLINE;
+	}
+	virtual HWND get_window() const {
+		return hWnd;
+	}
+};
+
+Nothing size_layout_helper(HWND hWndParent, MSG msg) {
+	std::vector<Paragraph> vector;
+	std::vector<LAYOUT_LINE_RESULT> result;
+	LeftJustifyingLayoutDelegate ld;
+	RECT rt;
+	std::vector<LAYOUT_LINE_RESULT>::iterator it;
+	LO_ITERATOR it2;
+
+	vector.resize(1);
+	vector.begin()->ld = &ld;
+	
+	//Construct window layout objects corresponding to the child windows.
+	HWND hWnd = GetWindow(hWndParent, GW_CHILD);
+
+	if (!hWnd) return Nothing(); //Nothing to do.
+	
+	vector.begin()->vector.push_back(new WindowLayoutObject(hWnd));
+	while (hWnd=GetWindow(hWnd, GW_HWNDNEXT)) {
+		vector.begin()->vector.push_back(new WindowLayoutObject(hWnd));
+	}
+
+	//Get width of parent window.
+	GetClientRect(hWndParent, &rt);
+
+	layout(rt.right, vector, result);
+
+	//Position child windows.
+	for (it = result.begin();it != result.end();++it) {
+		SetWindowPos(dynamic_cast<const WindowLayoutObject*>(it->lo)->get_window(), 0, it->point.x, it->point.y, 0, 0,
+			SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOSIZE);
+	}
+
+	//Free up memory.
+	for (it2 = vector.begin()->vector.begin();it2 != vector.begin()->vector.end();++it2) {
+		delete *it2;
+	}
+
+	return Nothing();
+}
+
+Transfer<MSG, Nothing>& size_children_according_to_layout(HWND hWndParent) {
+	std::function<Nothing(MSG)> _f(std::bind(size_layout_helper, hWndParent, _1));
+
+	return filter_code(WM_WINDOWPOSCHANGED) >> // %
+		filter_hwnd(hWndParent) >>
+		map(_f);
+}
+
 #endif

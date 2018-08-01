@@ -143,6 +143,7 @@
     <ClInclude Include="FileTransfer.h" />
     <ClInclude Include="FilterTransfer.h" />
     <ClInclude Include="IdentityTransfer.h" />
+    <ClInclude Include="LayoutEngine.h" />
     <ClInclude Include="LazyTransfer.h" />
     <ClInclude Include="MapTransfer.h" />
     <ClInclude Include="MergeTransfer.h" />
@@ -161,6 +162,7 @@
     <ClInclude Include="WithRemainderTransfer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LayoutEngine.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

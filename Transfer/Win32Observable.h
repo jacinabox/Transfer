@@ -9,11 +9,11 @@
 class Win32Observable: public Observable<CWPSTRUCT> {
 protected:
 	HWND hWnd;
-	std::auto_ptr<std::function<void(const CWPSTRUCT&)> > sink;
+	std::function<void(const CWPSTRUCT&)> sink;
 public:
 	Win32Observable(HWND _hWnd);
 	virtual ~Win32Observable();
-	virtual void install_handler(std::auto_ptr<std::function<void(const CWPSTRUCT&)> > _sink);
+	virtual void install_handler(std::function<void(const CWPSTRUCT&)> _sink);
 };
 
 //Constructs an observable representing messages sent to the window procedure

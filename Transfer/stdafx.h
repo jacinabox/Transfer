@@ -28,6 +28,7 @@
 #include "Miscellaneous.h"
 #include "FileTransfer.h"
 //#include "win32_swlp_map.h"
+#include "LayoutEngine.h"
 #include "Win32Transfer.h"
 #include "Win32Auxiliary.h"
 #include "Observable.h"
