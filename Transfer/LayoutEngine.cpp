@@ -17,15 +17,15 @@ struct LINE_WIDTH_RESULT {
 };
 
 LINE_WIDTH_RESULT line_width(const INTERNAL_STATE& is, LO_ITERATOR begin, LO_ITERATOR end) {
-	POINT current_point(is.current_point);
+	POINT point(is.left_point);
 	LINE_WIDTH_RESULT lwr = {0};
 	LO_ITERATOR it;
 	
 	for (it=begin;it!=end;++it) {
 		if ((*it)->get_float_type()==INLINE) {
-			if (current_point.x + (*it)->get_width() > is.right_point.x) return lwr;
+			if (point.x + (*it)->get_width() > is.right_point.x) return lwr;
 
-			current_point.x += (*it)->get_width();
+			point.x += (*it)->get_width();
 			lwr.width += (*it)->get_width();
 			lwr.n_objects++;
 		}
@@ -160,17 +160,19 @@ void layout(int viewport_width, const std::vector<Paragraph>& vector, std::vecto
 
 		result.insert(result.end(), line_result_inlines.begin(), line_result_inlines.end());
 		
+		//Update the current y-coordinate.
+		unsigned temp_y;
+		for (it3 = line_result_inlines.begin();it3 != line_result_inlines.end();++it3) {
+			temp_y = it3->point.y + it3->lo->get_height();
+			if (temp_y > is.current_point.y) is.current_point.y = temp_y;
+		}
+		if (is.current_point.y > is.left_point.y) is.left_point.y = is.current_point.y;
+		if (is.current_point.y > is.right_point.y) is.right_point.y = is.current_point.y;
+
 		layout_floated_left(is, line_result_left_floats.begin(), line_result_left_floats.end());
 		it2 += line_result_left_floats.size();
 
 		result.insert(result.end(), line_result_left_floats.begin(), line_result_left_floats.end());
-
-		//Update the current y-coordinate.
-		unsigned temp_y;
-		for (it3=line_result_inlines.begin();it3!=line_result_inlines.end();++it3) {
-			temp_y = it3->point.y + it3->lo->get_height();
-			if (temp_y > is.current_point.y) is.current_point.y = temp_y;
-		}
 
 		//Reset "x" coordinates:
 		if (is.left_point.y <= is.current_point.y) {
@@ -232,4 +234,29 @@ unsigned RightJustifyingLayoutDelegate::layout_line(const LayoutObject& lo) {
 
 LayoutDelegate* right_justifier() {
 	return new RightJustifyingLayoutDelegate();
+}
+
+/////////////////////////////////////
+
+
+CenterJustifyingLayoutDelegate::CenterJustifyingLayoutDelegate() {
+}
+
+CenterJustifyingLayoutDelegate::~CenterJustifyingLayoutDelegate() {
+}
+
+void CenterJustifyingLayoutDelegate::start_new_line(unsigned left_extent, unsigned right_extent, unsigned line_width) {
+	x = left_extent + (right_extent - line_width) / 2;
+}
+unsigned CenterJustifyingLayoutDelegate::layout_line(const LayoutObject& lo) {
+	unsigned width = lo.get_width();
+	unsigned x2 = x;
+
+	x += width;
+
+	return x2;
+}
+
+LayoutDelegate* center_justifier() {
+	return new CenterJustifyingLayoutDelegate();
 }

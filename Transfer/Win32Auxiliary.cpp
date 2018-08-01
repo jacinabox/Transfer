@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <windows.h>
 #include <functional>
+#include <algorithm>
 
 #ifdef WIN32
 
@@ -88,12 +89,18 @@ Transfer<MSG, Nothing>& size_to_parent(HWND hWndParent) {
 		resize_window();
 }
 
+//static bool _test_flag=false;
+
 class WindowLayoutObject : public LayoutObject {
 protected:
 	HWND hWnd;
 	mutable SIZE sz = { 0 };
+	//FLOAT_TYPE x;
+	mutable unsigned id;
 public:
-	WindowLayoutObject(HWND _hWnd) : hWnd(_hWnd) {
+	WindowLayoutObject(HWND _hWnd) : hWnd(_hWnd), id(0) {
+		/*x = (_test_flag ? FLOAT_LEFT : INLINE);
+		_test_flag = !_test_flag;*/
 	}
 	virtual ~WindowLayoutObject() {
 	}
@@ -120,16 +127,27 @@ public:
 	virtual HWND get_window() const {
 		return hWnd;
 	}
+	virtual int get_id() const {
+		if (!id) id = GetWindowLong(hWnd, GWL_ID);
+
+		return id;
+	}
 };
 
-Nothing size_layout_helper(HWND hWndParent, /*FLOAT_TYPE float_type, */MSG msg) {
+bool window_layout_comparator(const LayoutObject* wlo1, const LayoutObject* wlo2) {
+	return dynamic_cast<const WindowLayoutObject*>(wlo1)->get_id() <
+		dynamic_cast<const WindowLayoutObject*>(wlo2)->get_id();
+}
+
+/*FLOAT_TYPE float_type, */
+Nothing size_layout_helper(HWND hWndParent, MSG msg) {
 	std::vector<Paragraph> vector;
 	std::vector<LAYOUT_LINE_RESULT> result;
 	LeftJustifyingLayoutDelegate ld;
 	RECT rt;
 	std::vector<LAYOUT_LINE_RESULT>::iterator it;
 	LO_ITERATOR it2;
-
+//	_test_flag = false;
 	vector.resize(1);
 	vector.begin()->ld = &ld;
 	
@@ -142,6 +160,7 @@ Nothing size_layout_helper(HWND hWndParent, /*FLOAT_TYPE float_type, */MSG msg) 
 	while (hWnd=GetWindow(hWnd, GW_HWNDNEXT)) {
 		vector.begin()->vector.push_back(new WindowLayoutObject(hWnd));
 	}
+	std::sort(vector.begin()->vector.begin(), vector.begin()->vector.end(), window_layout_comparator);
 
 	//Get width of parent window.
 	GetClientRect(hWndParent, &rt);

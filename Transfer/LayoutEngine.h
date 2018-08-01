@@ -88,4 +88,17 @@ public:
 
 LayoutDelegate* right_justifier();
 
+class CenterJustifyingLayoutDelegate : public LayoutDelegate {
+protected:
+	unsigned x;
+
+public:
+	CenterJustifyingLayoutDelegate();
+	virtual ~CenterJustifyingLayoutDelegate();
+	virtual void start_new_line(unsigned left_extent, unsigned right_extent, unsigned line_width);
+	virtual unsigned layout_line(const LayoutObject& lo);
+};
+
+LayoutDelegate* center_justifier();
+
 #endif

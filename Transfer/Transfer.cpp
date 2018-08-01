@@ -106,6 +106,8 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			create_control2("BUTTON", { 10,10,200,40 }, "Test", 100, hwnd) >>
 			map(null_sink2<HWND>) >>
 			create_control2("BUTTON", { 10,50,200,80 }, "Test 2", 102, hwnd) >>
+			map(null_sink2<HWND>) >>
+			create_control2("BUTTON", { 10,50,200,80 }, "Test 3", 103, hwnd) >>
 			map(null_sink2<HWND>)
 
 			| size_children_according_to_layout(hwnd)
