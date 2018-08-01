@@ -41,7 +41,7 @@ void layout_line(const LINE_WIDTH_RESULT& lwr, const INTERNAL_STATE& is, LO_ITER
 	LO_ITERATOR it;
 
 	//Tell the layout delegate to start a new line.
-	ld->start_new_line(is.left_point.x, is.right_point.x);
+	ld->start_new_line(is.left_point.x, is.right_point.x, lwr.width);
 
 	for (it=begin;it!=end;++it) {
 
@@ -64,6 +64,37 @@ void layout_line(const LINE_WIDTH_RESULT& lwr, const INTERNAL_STATE& is, LO_ITER
 	}
 
 }
+
+void layout_floated_left(INTERNAL_STATE& is,
+	std::vector<LAYOUT_LINE_RESULT>::iterator begin,
+	std::vector<LAYOUT_LINE_RESULT>::iterator end) {
+
+	std::vector<LAYOUT_LINE_RESULT>::iterator it;
+
+	for (it = begin;it != end;++it) {
+		it->point.x = 0;
+		it->point.y = is.left_point.y;
+
+		if (it->lo->get_width() > is.left_point.x) {
+			is.left_point.x = it->lo->get_width();
+		}
+		is.left_point.y += it->lo->get_height();
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void layout(int viewport_width, const std::vector<Paragraph>& vector, std::vector<LAYOUT_LINE_RESULT>& result) {
 	INTERNAL_STATE is = { {0, 0}, {viewport_width, 0}, {0, 0} };
@@ -129,7 +160,10 @@ void layout(int viewport_width, const std::vector<Paragraph>& vector, std::vecto
 
 		result.insert(result.end(), line_result_inlines.begin(), line_result_inlines.end());
 		
-		//... todo calculate for floated left and floated right.
+		layout_floated_left(is, line_result_left_floats.begin(), line_result_left_floats.end());
+		it2 += line_result_left_floats.size();
+
+		result.insert(result.end(), line_result_left_floats.begin(), line_result_left_floats.end());
 
 		//Update the current y-coordinate.
 		unsigned temp_y;
@@ -146,7 +180,7 @@ void layout(int viewport_width, const std::vector<Paragraph>& vector, std::vecto
 			is.right_point.x = viewport_width;
 		}
 
-		//Finally clear temporary vectors.
+		
 		line_result.clear();
 		line_result_inlines.clear();
 		line_result_left_floats.clear();
@@ -160,7 +194,7 @@ LeftJustifyingLayoutDelegate::LeftJustifyingLayoutDelegate() {
 }
 LeftJustifyingLayoutDelegate ::~LeftJustifyingLayoutDelegate() {
 }
-void LeftJustifyingLayoutDelegate::start_new_line(unsigned left_extent, unsigned right_extent) {
+void LeftJustifyingLayoutDelegate::start_new_line(unsigned left_extent, unsigned right_extent, unsigned line_width) {
 	x = left_extent;
 }
 unsigned LeftJustifyingLayoutDelegate::layout_line(const LayoutObject& lo) {
@@ -174,4 +208,28 @@ unsigned LeftJustifyingLayoutDelegate::layout_line(const LayoutObject& lo) {
 
 LayoutDelegate* left_justifier() {
 	return new LeftJustifyingLayoutDelegate();
+}
+
+///////////////////////////////////////
+
+RightJustifyingLayoutDelegate::RightJustifyingLayoutDelegate() {
+}
+
+RightJustifyingLayoutDelegate::~RightJustifyingLayoutDelegate() {
+}
+
+void RightJustifyingLayoutDelegate::start_new_line(unsigned left_extent, unsigned right_extent, unsigned line_width) {
+	x = right_extent - line_width;
+}
+unsigned RightJustifyingLayoutDelegate::layout_line(const LayoutObject& lo) {
+	unsigned width = lo.get_width();
+	unsigned x2 = x;
+
+	x += width;
+
+	return x2;
+}
+
+LayoutDelegate* right_justifier() {
+	return new RightJustifyingLayoutDelegate();
 }

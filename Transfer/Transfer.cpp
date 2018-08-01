@@ -79,7 +79,6 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	/////////////////////////////////////////
 
 	HWND hwnd = create_frame_window(_T("Test"), NULL, NULL);
-	//set_window_is_dialog(hwnd);
 	//In this example, incoming window messages drive a flip-flop, which changes the title bar text.
 	//There is also a drawing test showing some demonstration of a drawing mini-DSL.
 	RECT rect{ 100, 100, 400, 400 };
@@ -87,7 +86,7 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	RECT rect3{ 0, 0, 640, 480 };
 	POINT pt{ 80, 380 };
 	POINT pt2{ 380 , 80 };
-	//WINDOW_INFO window_info{ "BUTTON", { 10,10, 200,40}, "Test", 1, hwnd };
+	SetWindowPos(hwnd, 0, 0, 0, 640, 480, 0);
 	std::function<RECT(MSG)> _f_a(std::bind(const__<RECT, MSG>, rect3, _1));
 	//std::function<WINDOW_INFO(MSG)> _f_b(std::bind(const__ < WINDOW_INFO, MSG>, window_info, _1));
 	Transfer<Nothing, Nothing>& transfer4 = win32_source() >>

@@ -37,7 +37,9 @@ public:
 	}
 	virtual ~LayoutDelegate() {
 	}
-	virtual void start_new_line(unsigned left_extent, unsigned right_extent) = 0;
+	//line_width is the number of pixels horizontally that are occupied by objects; i.e. the sum of the
+	//widths of the objects that are on the line.
+	virtual void start_new_line(unsigned left_extent, unsigned right_extent, unsigned line_width) = 0;
 	virtual unsigned layout_line(const LayoutObject& lo) = 0;
 };
 
@@ -67,10 +69,23 @@ protected:
 public:
 	LeftJustifyingLayoutDelegate();
 	virtual ~LeftJustifyingLayoutDelegate();
-	virtual void start_new_line(unsigned left_extent, unsigned right_extent);
+	virtual void start_new_line(unsigned left_extent, unsigned right_extent, unsigned line_width);
 	virtual unsigned layout_line(const LayoutObject& lo);
 };
 
 LayoutDelegate* left_justifier();
+
+class RightJustifyingLayoutDelegate : public LayoutDelegate {
+protected:
+	unsigned x;
+
+public:
+	RightJustifyingLayoutDelegate();
+	virtual ~RightJustifyingLayoutDelegate();
+	virtual void start_new_line(unsigned left_extent, unsigned right_extent, unsigned line_width);
+	virtual unsigned layout_line(const LayoutObject& lo);
+};
+
+LayoutDelegate* right_justifier();
 
 #endif

@@ -122,7 +122,7 @@ public:
 	}
 };
 
-Nothing size_layout_helper(HWND hWndParent, MSG msg) {
+Nothing size_layout_helper(HWND hWndParent, /*FLOAT_TYPE float_type, */MSG msg) {
 	std::vector<Paragraph> vector;
 	std::vector<LAYOUT_LINE_RESULT> result;
 	LeftJustifyingLayoutDelegate ld;
@@ -165,7 +165,7 @@ Nothing size_layout_helper(HWND hWndParent, MSG msg) {
 Transfer<MSG, Nothing>& size_children_according_to_layout(HWND hWndParent) {
 	std::function<Nothing(MSG)> _f(std::bind(size_layout_helper, hWndParent, _1));
 
-	return filter_code(WM_WINDOWPOSCHANGED) >> // %
+	return filter_code(WM_WINDOWPOSCHANGED) >>
 		filter_hwnd(hWndParent) >>
 		map(_f);
 }
