@@ -12,7 +12,7 @@ Transfer<MSG, LRESULT>& get_list_control_changes(HWND hListControl);
 
 Transfer<MSG, Nothing>& size_to_parent(HWND hWndParent);
 //The control ids, determines their order in the layout.
-Transfer<MSG, Nothing>& size_children_according_to_layout(HWND hWndParent);
+Transfer<MSG, Nothing>& size_children_according_to_layout(HWND hWndParent, unsigned padding_pixels=6);
 
 /*HWND make_list_view_control(HWND hWndParent, std::function<void()>);
 

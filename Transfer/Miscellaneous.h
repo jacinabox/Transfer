@@ -65,27 +65,24 @@ template<class I, class O> Transfer<I, O>& empty() {
 
 //A tool to take the disjunction of a list of transfers (in the process taking ownership
 //of the list elements).
-template<class I, class O> Transfer<I, O>& merge(std::list<Transfer<I, O>&>& ls) {
-	Transfer<I, O>& temp = *0;
-	std::list<Transfer<I, O>&>::iterator it = ls.begin(), it2 = ls.end();
+template<class I, class O> Transfer<I, O>& merge(std::list<Transfer<I, O>*>& ls) {
+	std::list<Transfer<I, O>*>::iterator it = ls.begin(), it2 = ls.end();
 	
 	if (it!=it2) {
+		Transfer<I, O>& temp = **(it++);
 
-
-
-		temp = *(it++);
 		for (;it!=it2;++it) {
-			temp = (temp | *it);
+			temp = (temp | **it);
 		}
 
 
 		ls.clear();
+		return temp;
 	}
 	else {
-		temp = empty();
+		return empty<I, O>();
 	}
 
-	return temp;
 }
 
 #endif

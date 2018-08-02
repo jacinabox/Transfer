@@ -33,6 +33,7 @@
 #include "Win32Auxiliary.h"
 #include "Observable.h"
 #include "Win32Observable.h"
+#include "CalculatorSample.h"
 #include <memory>
 #include <functional>
 

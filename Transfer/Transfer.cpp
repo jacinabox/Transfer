@@ -78,6 +78,7 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	/////////////////////////////////////////
 
+	goto skip;
 	HWND hwnd = create_frame_window(_T("Test"), NULL, NULL);
 	//In this example, incoming window messages drive a flip-flop, which changes the title bar text.
 	//There is also a drawing test showing some demonstration of a drawing mini-DSL.
@@ -87,7 +88,7 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	POINT pt{ 80, 380 };
 	POINT pt2{ 380 , 80 };
 	SetWindowPos(hwnd, 0, 0, 0, 640, 480, 0);
-	std::function<RECT(MSG)> _f_a(std::bind(const__<RECT, MSG>, rect3, _1));
+	//std::function<RECT(MSG)> _f_a(std::bind(const__<RECT, MSG>, rect3, _1));
 	//std::function<WINDOW_INFO(MSG)> _f_b(std::bind(const__ < WINDOW_INFO, MSG>, window_info, _1));
 	Transfer<Nothing, Nothing>& transfer4 = win32_source() >>
 		(filter_code(WM_LBUTTONDOWN) >>
@@ -118,12 +119,14 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 				>> move_to(&pt)
 				>> line_to(&pt2, static_cast<HPEN>(GetStockObject(WHITE_PEN)))));
 
-	std::auto_ptr<Observable<Nothing> > observable(&(win32_observable(hwnd)
-		>> map(null_sink2<CWPSTRUCT>)));
+	/*std::auto_ptr<Observable<Nothing> > observable(&(win32_observable(hwnd)
+		>> map(null_sink2<CWPSTRUCT>)));*/
 	//>> map(null_sink2<Nothing>)));
 
-	Transfer<Nothing, Nothing>::transduce_loop(f0,
+	/*Transfer<Nothing, Nothing>::transduce_loop(f0,
 		std::auto_ptr<Transfer<Nothing, Nothing> >(&transfer4),
-		std::function<void(const Nothing&)>(null_sink<Nothing>));
+		std::function<void(const Nothing&)>(null_sink<Nothing>));*/
+	skip:
+	calculator_sample();
     return 0;
 }

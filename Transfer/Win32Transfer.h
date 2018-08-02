@@ -27,10 +27,11 @@ Transfer<MSG, MSG>& filter_code(int code);
 Transfer<MSG, MSG>& filter_code_in_range(int code1, int code2);
 Transfer<MSG, LRESULT>& send_message();
 Transfer<MSG, BOOL>& post_message();
-Transfer<std::basic_string<char>, BOOL>& set_window_text(HWND hwnd);
-Transfer<Nothing, std::basic_string<char> >& get_window_text(HWND hwnd);
+Transfer<std::basic_string<char>, BOOL>& set_window_text(HWND hwnd, int id=0);
+Transfer<Nothing, std::basic_string<char> >& get_window_text(HWND hwnd, int id=0);
+//Wrapper for GetDlgItem procedure.
+Transfer<Nothing, HWND>& get_dlg_item(HWND hwnd, int id);
 Transfer<MSG, MSG>& filter_wparam(WPARAM wParam);
-
 
 Transfer<MSG, MSG>& filter_lparam(LPARAM lPam);
 Transfer<std::pair<HWND, RECT>, Nothing>& resize_window();

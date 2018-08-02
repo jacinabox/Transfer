@@ -83,7 +83,7 @@ Transfer<MSG, Nothing>& size_to_parent(HWND hWndParent) {
 	HWND hWnd = GetWindow(hWndParent, GW_CHILD);
 	std::function<std::pair<HWND, RECT>(MSG)> _f(std::bind(size_to_parent_helper, hWndParent, _1));
 
-	return filter_code(WM_WINDOWPOSCHANGED) >> // %
+	return //(filter_code(WM_WINDOWPOSCHANGED) | filter_code(WM_CREATE)) >>
 		filter_hwnd(hWndParent) >>
 		map(_f) >>
 		resize_window();
@@ -94,11 +94,13 @@ Transfer<MSG, Nothing>& size_to_parent(HWND hWndParent) {
 class WindowLayoutObject : public LayoutObject {
 protected:
 	HWND hWnd;
+	unsigned padding_pixels;
 	mutable SIZE sz = { 0 };
 	//FLOAT_TYPE x;
 	mutable unsigned id;
 public:
-	WindowLayoutObject(HWND _hWnd) : hWnd(_hWnd), id(0) {
+	WindowLayoutObject(HWND _hWnd, unsigned _padding_pixels) :
+		hWnd(_hWnd), padding_pixels(_padding_pixels), id(0) {
 		/*x = (_test_flag ? FLOAT_LEFT : INLINE);
 		_test_flag = !_test_flag;*/
 	}
@@ -110,8 +112,8 @@ public:
 		//The size is cached.
 		if (!sz.cx) {
 			GetClientRect(hWnd, &rt);
-			sz.cx = rt.right;
-			sz.cy = rt.bottom;
+			sz.cx = rt.right+padding_pixels;
+			sz.cy = rt.bottom+padding_pixels;
 		}
 
 		return sz.cx;
@@ -140,12 +142,11 @@ bool window_layout_comparator(const LayoutObject* wlo1, const LayoutObject* wlo2
 }
 
 /*FLOAT_TYPE float_type, */
-Nothing size_layout_helper(HWND hWndParent, MSG msg) {
+Nothing size_layout_helper(HWND hWndParent, unsigned padding_pixels, MSG msg) {
 	std::vector<Paragraph> vector;
-	std::vector<LAYOUT_LINE_RESULT> result;
 	LeftJustifyingLayoutDelegate ld;
 	RECT rt;
-	std::vector<LAYOUT_LINE_RESULT>::iterator it;
+	std::vector<LAYOUT_LINE_RESULT>::const_iterator it;
 	LO_ITERATOR it2;
 //	_test_flag = false;
 	vector.resize(1);
@@ -156,20 +157,23 @@ Nothing size_layout_helper(HWND hWndParent, MSG msg) {
 
 	if (!hWnd) return Nothing(); //Nothing to do.
 	
-	vector.begin()->vector.push_back(new WindowLayoutObject(hWnd));
+	vector.begin()->vector.push_back(new WindowLayoutObject(hWnd, padding_pixels));
 	while (hWnd=GetWindow(hWnd, GW_HWNDNEXT)) {
-		vector.begin()->vector.push_back(new WindowLayoutObject(hWnd));
+		vector.begin()->vector.push_back(new WindowLayoutObject(hWnd, padding_pixels));
 	}
 	std::sort(vector.begin()->vector.begin(), vector.begin()->vector.end(), window_layout_comparator);
 
 	//Get width of parent window.
 	GetClientRect(hWndParent, &rt);
 
-	layout(rt.right, vector, result);
+	LayoutInternalState lis(rt.right - padding_pixels, vector);
+	lis.layout(rt.bottom);
+	const std::vector<LAYOUT_LINE_RESULT>& result = lis.get_result();
 
 	//Position child windows.
-	for (it = result.begin();it != result.end();++it) {
-		SetWindowPos(dynamic_cast<const WindowLayoutObject*>(it->lo)->get_window(), 0, it->point.x, it->point.y, 0, 0,
+	for (it = result.cbegin();it != result.cend();++it) {
+		SetWindowPos(dynamic_cast<const WindowLayoutObject*>(it->lo)->get_window(), 0,
+			it->point.x+padding_pixels, it->point.y+padding_pixels, 0, 0,
 			SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOSIZE);
 	}
 
@@ -181,10 +185,10 @@ Nothing size_layout_helper(HWND hWndParent, MSG msg) {
 	return Nothing();
 }
 
-Transfer<MSG, Nothing>& size_children_according_to_layout(HWND hWndParent) {
-	std::function<Nothing(MSG)> _f(std::bind(size_layout_helper, hWndParent, _1));
+Transfer<MSG, Nothing>& size_children_according_to_layout(HWND hWndParent, unsigned padding_pixels) {
+	std::function<Nothing(MSG)> _f(std::bind(size_layout_helper, hWndParent, padding_pixels, _1));
 
-	return filter_code(WM_WINDOWPOSCHANGED) >>
+	return //(filter_code(WM_WINDOWPOSCHANGED) | filter_code(WM_CREATE))>>
 		filter_hwnd(hWndParent) >>
 		map(_f);
 }

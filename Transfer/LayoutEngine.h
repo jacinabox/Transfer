@@ -56,9 +56,34 @@ struct LAYOUT_LINE_RESULT {
 	const LayoutObject* lo;
 };
 
-typedef std::vector<const LayoutObject*>::const_iterator LO_ITERATOR;
+struct INTERNAL_STATE {
+	POINT left_point, right_point, current_point;
+};
 
 void layout(int viewport_width, const std::vector<Paragraph>& vector, std::vector<LAYOUT_LINE_RESULT>& result);
+
+typedef std::vector<const LayoutObject*>::const_iterator LO_ITERATOR;
+
+//A LayoutInternalState object holds data about a particular viewport- view contents
+//configuration, to assist in efficient scrolling.
+class LayoutInternalState {
+protected:
+	INTERNAL_STATE is;
+	int viewport_width;
+	std::vector<Paragraph>::const_iterator it, it_end;
+	LO_ITERATOR it2;
+	std::vector<LAYOUT_LINE_RESULT> result;
+public:
+	LayoutInternalState(int _viewport_width, const std::vector<Paragraph>& _vector);
+	virtual ~LayoutInternalState();
+
+	//scroll_position_y argument specifies the logical y-coordinate of the bottom of the
+	//viewport; i.e. the furthest vertical extent of the document that is currently
+	//visible.
+	virtual void layout(int scroll_position_y);
+	virtual const std::vector<LAYOUT_LINE_RESULT>& get_result() const;
+};
+
 
 /////////////////////////////////////////
 

@@ -53,7 +53,7 @@ static LRESULT WINAPI hook_proc(LONG code, WPARAM wParam, LPARAM lParam) {
 	if (!loop_protect_flag)
 		messages.push_back(*cwp_p);
 
-
+	
 
 	//Certain tasks can only be performed within the scope of the window procedure.
 	//For this we can use a hook mechanism.
@@ -71,6 +71,19 @@ static LRESULT WINAPI hook_proc(LONG code, WPARAM wParam, LPARAM lParam) {
 
 	return CallNextHookEx(NULL, code, wParam, lParam);
 
+}
+
+static LRESULT WINAPI keyboard_hook_proc(LONG code, WPARAM wParam, LPARAM lParam) {
+	CWPSTRUCT cwp;
+
+	cwp.hwnd = 0;
+	cwp.message = (lParam & (1 << 31) ? WM_KEYUP : WM_KEYDOWN);
+	cwp.wParam = wParam;
+	cwp.lParam = lParam;
+
+	messages.push_back(cwp);
+
+	return CallNextHookEx(NULL, code, wParam, lParam);
 }
 
 class Win32Transfer : public Transfer<Nothing, MSG> {
@@ -129,6 +142,7 @@ Transfer<Nothing, MSG>& win32_source() {
 		HINSTANCE hInst = GetModuleHandle(NULL);
 		DWORD i = GetCurrentThreadId();
 		SetWindowsHookEx(WH_CALLWNDPROC, reinterpret_cast<HOOKPROC>(hook_proc), hInst, i);
+		SetWindowsHookEx(WH_KEYBOARD, reinterpret_cast<HOOKPROC>(keyboard_hook_proc), hInst, i);
 		//int y = GetLastError();
 
 		hook_is_set_flag = true;
@@ -185,8 +199,10 @@ Transfer<MSG, BOOL>& post_message() {
 	return ___map_impl(_f);
 }
 
-static BOOL set_window_text_helper(HWND hwnd, std::basic_string<char> s) {
+static BOOL set_window_text_helper(HWND hwnd, int id, std::basic_string<char> s) {
 	BOOL b;
+
+	if (id) hwnd = GetDlgItem(hwnd, id);
 	
 	loop_protect_flag = true;
 
@@ -197,14 +213,16 @@ static BOOL set_window_text_helper(HWND hwnd, std::basic_string<char> s) {
 	return b;
 }
 
-Transfer<std::basic_string<char>, BOOL>& set_window_text(HWND hwnd) {
-	std::function<BOOL(std::basic_string<char>)> f(std::bind(set_window_text_helper, hwnd, _1));
+Transfer<std::basic_string<char>, BOOL>& set_window_text(HWND hwnd, int id) {
+	std::function<BOOL(std::basic_string<char>)> f(std::bind(set_window_text_helper, hwnd, id, _1));
 
 	return ___map_impl(f);
 }
 
-static std::basic_string<char> get_window_text_helper(HWND hwnd, Nothing _dummy_input) {
+static std::basic_string<char> get_window_text_helper(HWND hwnd, int id, Nothing _dummy_input) {
 	char buffer[1024];
+
+	if (id) hwnd = GetDlgItem(hwnd, id);
 
 	GetWindowTextA(hwnd, buffer, sizeof(buffer) - 1);
 	buffer[sizeof(buffer) - 1] = '\0';
@@ -212,12 +230,17 @@ static std::basic_string<char> get_window_text_helper(HWND hwnd, Nothing _dummy_
 	return std::string(buffer, sizeof(buffer));
 }
 
-Transfer<Nothing, std::basic_string<char> >& get_window_text(HWND hwnd) {
-	std::function<std::basic_string<char>(Nothing)> f(std::bind(get_window_text_helper, hwnd, _1));
+Transfer<Nothing, std::basic_string<char> >& get_window_text(HWND hwnd, int id) {
+	std::function<std::basic_string<char>(Nothing)> f(std::bind(get_window_text_helper, hwnd, id, _1));
 
 	return ___map_impl(f);
 }
 
+Transfer<Nothing, HWND>& get_dlg_item(HWND hwnd, int id) {
+	std::function<HWND(Nothing)> _f(std::bind(GetDlgItem, hwnd, id));
+
+	return ___map_impl(_f);
+}
 
 static bool filter_helper3(WPARAM wParam, MSG msg) {
 	return wParam == msg.wParam;
@@ -309,9 +332,15 @@ INT_PTR CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARA
 		
 	
 		
-	case WM_GETDLGCODE:
-		break;
-		
+	/*case WM_GETDLGCODE:
+		//Setup an acceptable default policy for handling keyboard input.
+		SetWindowLong(hwnd, 0, DLGC_WANTALLKEYS);
+		return TRUE;*/
+	
+	/*case WM_KEYDOWN:
+	case WM_KEYUP:
+	case WM_CHAR:
+		return TRUE;*/
 	case WM_ACTIVATE:
 		SetFocus(hLastFocusWnd);
 		return TRUE;

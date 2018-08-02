@@ -138,6 +138,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CalculatorSample.h" />
     <ClInclude Include="ComposeTransfer.h" />
     <ClInclude Include="FeedbackTransfer.h" />
     <ClInclude Include="FileTransfer.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="WithRemainderTransfer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CalculatorSample.cpp" />
     <ClCompile Include="LayoutEngine.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

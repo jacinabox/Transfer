@@ -6,10 +6,6 @@
 
 /////////////////////////////////////////
 
-struct INTERNAL_STATE {
-	POINT left_point, right_point, current_point;
-};
-
 struct LINE_WIDTH_RESULT {
 	unsigned width;
 	unsigned n_objects;
@@ -82,6 +78,21 @@ void layout_floated_left(INTERNAL_STATE& is,
 	}
 }
 
+LayoutInternalState::LayoutInternalState(int _viewport_width, const std::vector<Paragraph>& _vector) :
+	is({ { 0, 0 },{ _viewport_width, 0 },{ 0, 0 } }),
+	viewport_width(_viewport_width),
+//	vector(_vector),
+	it(_vector.cbegin()),
+	it_end(_vector.cend()) {
+
+	if (it != it_end) {
+		it2 = it->vector.cbegin();
+	}
+
+}
+
+LayoutInternalState::~LayoutInternalState() {
+}
 
 
 
@@ -92,32 +103,28 @@ void layout_floated_left(INTERNAL_STATE& is,
 
 
 
+void LayoutInternalState::layout(int scroll_position_y) {
+	
 
-
-
-
-void layout(int viewport_width, const std::vector<Paragraph>& vector, std::vector<LAYOUT_LINE_RESULT>& result) {
-	INTERNAL_STATE is = { {0, 0}, {viewport_width, 0}, {0, 0} };
-	std::vector<Paragraph>::const_iterator it = vector.cbegin();
-	LO_ITERATOR it2;
 	std::vector<LAYOUT_LINE_RESULT>::iterator it3;
 	std::vector<LAYOUT_LINE_RESULT> line_result, line_result_inlines, line_result_left_floats,
 		line_result_right_floats;
 	LAYOUT_LINE_RESULT temp;
 	LINE_WIDTH_RESULT lwr;
 
-	result.clear();
+	//result.clear();
 
-	if (it == vector.cend()) return;
+	//if (it == it_end) return;
 
-	it2 = it->vector.cbegin();
 
 	//Each iteration of the loop processes a single line (which has little to do with the structure
 	//of paragraphs, and is dictated by how many objects fit in the space).
-	while (it != vector.cend()) {
+	while (it != it_end
+		&& is.current_point.y < scroll_position_y) {
+
 		if (it2 == it->vector.cend()) {
 			++it;
-			if (it==vector.cend()) break;
+			if (it==it_end) break;
 			it2 = it->vector.cbegin();
 			continue;
 		}
@@ -189,9 +196,10 @@ void layout(int viewport_width, const std::vector<Paragraph>& vector, std::vecto
 		line_result_right_floats.clear();
 	}
 }
-
-///////////////////////////////////////
-
+const std::vector<LAYOUT_LINE_RESULT>& LayoutInternalState::get_result() const {
+	return result;
+}
+//////////////////////////////////////
 LeftJustifyingLayoutDelegate::LeftJustifyingLayoutDelegate() {
 }
 LeftJustifyingLayoutDelegate ::~LeftJustifyingLayoutDelegate() {
