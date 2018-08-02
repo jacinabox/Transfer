@@ -27,8 +27,9 @@ operations of the category.
 
 ------------------------------------------
 
-The file Transfer.cpp compiles on Visual Studio Express. It has an example
-program  as described in the code.
+The file Transfer.cpp compiles on Visual Studio Express. It has a couple of
+simple sample programs. There is also a more complete sample with interface
+in CalculatorSample.h.
 
 ------------------------------------------
 
