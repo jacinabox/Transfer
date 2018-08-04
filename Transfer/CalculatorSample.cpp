@@ -222,6 +222,10 @@ void calculator_sample() {
 			create_control2("Button", { 0, 0, 50, 50 }, "C", 115, hwnd) >>
 			map(null_sink2<HWND>) |
 
+			map(null_sink2<MSG>) >>
+			create_control2("Button", { 0, 0, 50, 50 }, "0", 116, hwnd) >>
+			map(null_sink2<HWND>) |
+
 			/*	map(null_sink2<MSG>) >>
 				create_control2("Button", { 0, 0, 50, 50 }, control_array[1], 102, hwnd) >>
 				map(null_sink2<HWND>) |
