@@ -122,11 +122,16 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	/*std::auto_ptr<Observable<Nothing> > observable(&(win32_observable(hwnd)
 		>> map(null_sink2<CWPSTRUCT>)));*/
 	//>> map(null_sink2<Nothing>)));
+skip:
+	Schedule schedule;
+	std::auto_ptr<SignalObservable<Nothing> > observable(new SignalObservable<Nothing>(
+		std::auto_ptr<Transfer<Nothing, std::pair<Nothing, time_t> > >(
+			&empty<Nothing, std::pair<Nothing, time_t> >()),
+			schedule));
 
 	/*Transfer<Nothing, Nothing>::transduce_loop(f0,
 		std::auto_ptr<Transfer<Nothing, Nothing> >(&transfer4),
 		std::function<void(const Nothing&)>(null_sink<Nothing>));*/
-	skip:
 	calculator_sample();
     return 0;
 }

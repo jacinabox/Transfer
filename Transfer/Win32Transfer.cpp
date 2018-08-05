@@ -23,6 +23,8 @@ static bool loop_protect_flag = false;
 //static std::map<HWND, Nothing> window_is_dialog_mp;
 #define SWLP_MAP_INTERFACE std::map<HWND, std::function<void(const CWPSTRUCT*)> >
 static SWLP_MAP_INTERFACE window_hook_mp;
+#define SWLP_MAP_INTERFACE2 std::map<HWND, Schedule>
+static SWLP_MAP_INTERFACE2 window_schedule_mp;
 
 static HFONT default_font = CreateFontA(14,
 	0,
@@ -65,7 +67,7 @@ static LRESULT WINAPI hook_proc(LONG code, WPARAM wParam, LPARAM lParam) {
 	//MessageBox(NULL, _T("Test"), 0, 0);
 	//Let's free up entries of these maps upon encountering WM_NCDESTROY message.
 	if (cwp_p->message == WM_NCDESTROY) {
-		//window_is_dialog_mp.erase(cwp_p->hwnd);
+		window_schedule_mp.erase(cwp_p->hwnd);
 		window_hook_mp.erase(cwp_p->hwnd);
 	}
 
@@ -306,11 +308,14 @@ Transfer<int, Nothing>& set_selected_item(HWND hListControl) {
 
 static LPCTSTR w_class_name = _T("_TR_FRAME_WINDOW");
 static HWND hLastFocusWnd = 0;
+const static UINT my_timer_id = 1001;
+static Schedule schedule;
 
 INT_PTR CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	PAINTSTRUCT ps;
 	HDC dc;
 	WINDOWPOS* wpp;
+	unsigned t_interval;
 
 	switch (message) {
 	case WM_PAINT:
@@ -351,6 +356,15 @@ INT_PTR CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARA
 	case DM_SETDEFID: break;		
 	case WM_SETCURSOR:
 		SetCursor(LoadCursor(NULL, IDC_ARROW));
+		return TRUE;
+	case WM_TIMER:
+		//In theory, long running-operations in the discharge_scheduled_events
+		//procedure call could lead to this handler getting invoked again,
+		//therefore I have the timer disabled temporarily while going through
+		//discharge_scheduled_events.
+		KillTimer(hwnd, my_timer_id);
+		t_interval = window_schedule_mp.find(hwnd)->second.discharge_scheduled_events();
+		if (t_interval != -1) SetTimer(hwnd, my_timer_id, t_interval, NULL);
 		return TRUE;
 	case WM_CLOSE:
 		DestroyWindow(hwnd);
@@ -397,6 +411,8 @@ HWND create_frame_window(LPCTSTR title, HICON icon, HMENU menu) {
 	dlgTemplate[0].cy = CW_DEFAULT;
 
 	memset(dlgTemplate + 1, 0, 4 * sizeof(dlgTemplate[0]));
+
+	window_schedule_mp.insert(std::make_pair(hWnd, Schedule()));
 
 	hWnd = CreateDialogIndirectA(inst, dlgTemplate, NULL, frame_window_proc);
 
@@ -536,8 +552,19 @@ Transfer<Nothing, HWND>& create_control2(char class_name[128], RECT rect, LPCSTR
 //////////////////////////////////////
 
 //This is the interface to this module's hook mechanism.
-void set_window_hook(HWND hWnd, std::function<void(const CWPSTRUCT*)> f) {
+void set_window_hook(HWND hWnd, const std::function<void(const CWPSTRUCT*)>& f) {
 	window_hook_mp.insert(std::make_pair(hWnd, f)); // %
+}
+
+/////////////////////////////////////
+
+Schedule* retrieve_schedule(HWND hWnd) {
+	auto it = window_schedule_mp.find(hWnd);
+
+	if (it == window_schedule_mp.end()) return 0;
+	
+	
+	return &it->second;
 }
 
 #endif

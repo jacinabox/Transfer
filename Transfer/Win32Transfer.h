@@ -25,23 +25,26 @@ Transfer<MSG, MSG>& filter_code(int code);
 //range [code1,code2). This is occasionally useful when handling
 //user-defined message codes.
 Transfer<MSG, MSG>& filter_code_in_range(int code1, int code2);
+Transfer<MSG, MSG>& filter_wparam(WPARAM wParam);
+Transfer<MSG, MSG>& filter_lparam(LPARAM lParam);
+
 Transfer<MSG, LRESULT>& send_message();
 Transfer<MSG, BOOL>& post_message();
+
+//Helpers for manipulating window attributes.
 Transfer<std::basic_string<char>, BOOL>& set_window_text(HWND hwnd, int id=0);
 Transfer<Nothing, std::basic_string<char> >& get_window_text(HWND hwnd, int id=0);
-//Wrapper for GetDlgItem procedure.
+Transfer<int, Nothing>& set_selected_item(HWND hListControl);
 Transfer<Nothing, HWND>& get_dlg_item(HWND hwnd, int id);
-Transfer<MSG, MSG>& filter_wparam(WPARAM wParam);
-
-Transfer<MSG, MSG>& filter_lparam(LPARAM lPam);
 Transfer<std::pair<HWND, RECT>, Nothing>& resize_window();
 Transfer<RECT, Nothing>& resize_window2(HWND hWnd);
-Transfer<int, Nothing>& set_selected_item(HWND hListControl);
 
 
 //A helper function to construct a frame window with reasonable defaults.
 HWND create_frame_window(LPCTSTR title, HICON icon, HMENU menu);
 
+
+//Helper functions to create controls and retrieve their handles by id.
 struct WINDOW_INFO {
 	char class_name[128];
 	RECT rect;
@@ -57,6 +60,8 @@ Transfer<Nothing, HWND>& create_control2(char class_name[128],
 	int id,
 	HWND hWndParent);
 
+
+//Drawing....
 extern std::function<Nothing(HDC)> wm_paint_handler;
 
 template<class FUNCTIONAL> Nothing handle_wm_paint_helper(std::pair<FUNCTIONAL, MSG> pair) {
@@ -117,7 +122,12 @@ DRAW_FUNCTION ellipse(LPCRECT pRect, HPEN hPen, HBRUSH hBrush);
 
 #endif
 
-void set_window_hook(HWND hWnd, std::function<void(const CWPSTRUCT*)> f);
-//void set_window_is_dialog(HWND hWnd);
+//Interface to the framework's hook system.
+void set_window_hook(HWND hWnd, const std::function<void(const CWPSTRUCT*)>& f);
+
+//Retrieve the schedule object associated with some frame window.
+//Returns null if the window is not associated with a schedule.
+  Schedule* retrieve_schedule(HWND hWnd);
+
 
 #endif
