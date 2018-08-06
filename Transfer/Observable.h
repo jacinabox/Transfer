@@ -7,7 +7,10 @@
 
 /* The "Transfer" suite of modules is designed to be called in a synchronous event loop.
 The Observable class, by contrast, is this library's answer to the problem of /abstraction
-inversion/.
+inversion/. The usual reason to employ abstraction inversion, is that it gets too unwieldy to process
+some type of message in the main reactimate loop. In that case, abstraction inversion
+is employed to feed the message stream in some ad hoc manner, and the reactimate loop is kept
+clear of such concern.
 
 If Transfers are arrows, then Observables are co-variant functors.
 
