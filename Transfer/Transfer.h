@@ -27,7 +27,9 @@ public:
 
 	//A transfer in general cannot modify itself (because transduce is const), so it has
 	//to prepare a representation with its new state. Places where a transfer object
-	//absolutely has to modify its state internally, end up being marked mutable.
+	//absolutely has to modify its state internally, are indicated with the mutable
+	//specifier.
+	//
 	//Transfers may be modified to take ownership of their components, and those components
 	//set to null. If a transduce causes the caller to take ownership of some
 	//components, this must happen *after* all input processing in that transduce method

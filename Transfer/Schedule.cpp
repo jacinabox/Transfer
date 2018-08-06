@@ -3,16 +3,6 @@
 #include <algorithm>
 #include <iterator>
 
-/*
-The schedule module is how this library handles precise time, and precise time orderings.
-The literature on FRP has drawn the distinction between internally and externally generated
-signals. If external signal generation is fully asynchronous, time orderings of these
-signals cannot be globally consistent, by the same intuition as is behind the CAP-theorem.
-However, in the special case where all signals under consideration are internally generated,
-all asynchronous nodes in a distributed network may replay the (statically known and calculable)
-event sequences. This module handles the special case, providing globally consistent
-time orderings for a special class of signals, namely internally generated ones.*/
-
 Schedule::Schedule() : counter(0) {
 }
 
@@ -49,7 +39,7 @@ void Schedule::remove_handler(SCHEDULE_ID id) {
 	std::remove_if(schedule.begin(), schedule.end(), _f);
 }
 
-unsigned Schedule::discharge_scheduled_events() {
+unsigned Schedule::dispatch_scheduled_events() {
 	time_t t;
 
 	//Decide the current time.

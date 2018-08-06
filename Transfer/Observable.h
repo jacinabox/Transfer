@@ -12,18 +12,18 @@ some type of message in the main reactimate loop. In that case, abstraction inve
 is employed to feed the message stream in some ad hoc manner, and the reactimate loop is kept
 clear of such concern.
 
-If Transfers are arrows, then Observables are co-variant functors.
+Hughes arrows are a model of computation which encode input types to a procedure explicitly.
+Transfers are an exemplar. This Observable class defines a co-variant functor, to which
+arrows precompose.
 
 While both Transfer's "transduce" and Observable's "install_handler" methods receive a functional
-as an argument, the implied lifetimes of these arguments are different. The argument to
-"transduce" is scoped only to the method call, whilst the argument to "install_handler" is
-scoped to the lifetime of the Observable object. The argument to "install_handler" may
-(and in common use cases, must) be saved for use as a callback.
+as an argument, the distinction lies in the lifetime of such an argument; the transduce method cannot
+save it, while the Observable can (and in common cases, must).
 
-As a design tradeoff, observables, unlike Transfers, do not reconstruct themselves, and
-so cannot support memory compact-switches or recursive structures. This tradeoff is necessary
-because Observable objects need stable addresses, in order to be callable by the OS and
-so forth.
+As a design tradeoff, observables, unlike Transfers, do not prepare more memory compact copies
+of themselves as they go, and so cannot support memory compact-switches or recursive structures.
+This tradeoff is necessary because Observable objects need stable addresses, in order to be callable
+by the OS.
 
 Thread safety:
 
@@ -91,7 +91,7 @@ public:
 	}
 };
 
-/* As a co-variant functor, Observables enjoy pre-composition of an arrow action, i.e. Transfers.*/
+/* As a co-variant functor, Observables enjoy pre-composition of an arrow action.*/
 template<class I, class O> Observable<O>& operator >>(Observable<I>& observable, Transfer<I, O>& transfer) {
 	return *new ExtendObservable<I, O>(std::auto_ptr<Observable<I> >(&observable),
 		std::auto_ptr<Transfer<I, O> >(&transfer));
