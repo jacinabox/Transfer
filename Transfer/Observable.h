@@ -47,15 +47,20 @@ protected:
 	std::auto_ptr<Observable<T> > p1, p2;
 public:
 	MergeObservable(std::auto_ptr<Observable<T> > _p1, std::auto_ptr<Observable<T> > _p2) : p1(_p1), p2(_p2) {
+
 		assert(p1.get());
 		assert(p2.get());
+
 	}
 	virtual ~MergeObservable() {
 	}
 	virtual void install_handler(std::function<void(const T&)> _sink) {
 
+
+
 		p1->install_handler(_sink);
 		p2->install_handler(_sink);
+
 	}
 };
 
@@ -87,7 +92,9 @@ public:
 	virtual void install_handler(std::function<void(const O&)> _sink) {
 		std::function<void(const I&)> sink2(std::bind(extend_Observable_helper<I, O>, &p_transfer, _sink, _1));
 
+
 		p_Observable->install_handler(sink2);
+
 	}
 };
 

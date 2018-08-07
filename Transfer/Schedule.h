@@ -18,7 +18,7 @@ struct SCHEDULE_ENTRY {
 
 
 /*
-The schedule module is how this library handles precise time, and precise time orderings.
+The schedule module is how this library handles precise time and precise time orderings.
 The literature on FRP has drawn the distinction between internally and externally generated
 signals. If external signal generation is fully asynchronous, time orderings of these
 signals cannot be globally consistent, by the same intuition as is behind the CAP-theorem.
