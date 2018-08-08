@@ -124,8 +124,8 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//>> map(null_sink2<Nothing>)));
 skip:
 	Schedule schedule;
-	std::auto_ptr<Observable<WITH_TIME(Nothing)> > observable(&signal(empty<Nothing, WITH_TIME(Nothing) >(),
-			schedule));
+	/*std::auto_ptr<Observable<WITH_TIME(Nothing)> > observable(&signal(empty<Nothing, WITH_TIME(Nothing) >(),
+			schedule));*/
 
 	/*Transfer<Nothing, Nothing>::transduce_loop(f0,
 		std::auto_ptr<Transfer<Nothing, Nothing> >(&transfer4),

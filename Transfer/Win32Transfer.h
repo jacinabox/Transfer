@@ -38,10 +38,11 @@ Transfer<int, Nothing>& set_selected_item(HWND hListControl);
 Transfer<Nothing, HWND>& get_dlg_item(HWND hwnd, int id);
 Transfer<std::pair<HWND, RECT>, Nothing>& resize_window();
 Transfer<RECT, Nothing>& resize_window2(HWND hWnd);
-
+Transfer<Nothing, SCROLLINFO>& get_scroll_info(int nBar, HWND hwnd, int id = 0);
+Transfer<SCROLLINFO, Nothing>& set_scroll_info(int nBar, HWND hwnd, int id = 0);
 
 //A helper function to construct a frame window with reasonable defaults.
-HWND create_frame_window(LPCTSTR title, HICON icon, HMENU menu);
+HWND create_frame_window(LPCTSTR title, HICON icon=0, HMENU menu=0, UINT style=WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN);
 
 
 //Helper functions to create controls and retrieve their handles by id.
@@ -129,5 +130,7 @@ void set_window_hook(HWND hWnd, const std::function<void(const CWPSTRUCT*)>& f);
 //Returns null if the window is not associated with a schedule.
   Schedule* retrieve_schedule(HWND hWnd);
 
+//Set loop protect.
+void set_loop_protect(bool _loop_protect_flag);
 
 #endif

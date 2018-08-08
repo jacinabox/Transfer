@@ -236,8 +236,8 @@ void calculator_sample() {
 
 		map(std::function<RECT(MSG)>(std::bind(const__<RECT, MSG>, rect, _1))) >>
 			resize_window2(hwnd) |
-
-			size_children_according_to_layout(hwnd) |
+		
+		size_children_according_to_layout(hwnd) |
 
 		filter_code(WM_KEYDOWN) >>
 			scanning(cs_init, numeric) >>

@@ -136,9 +136,39 @@ public:
 	}
 };
 
-bool window_layout_comparator(const LayoutObject* wlo1, const LayoutObject* wlo2) {
+static bool window_layout_comparator(const LayoutObject* wlo1, const LayoutObject* wlo2) {
 	return dynamic_cast<const WindowLayoutObject*>(wlo1)->get_id() <
 		dynamic_cast<const WindowLayoutObject*>(wlo2)->get_id();
+}
+
+//The code to implement a scrolling viewport.
+static int setup_scrollbars(HWND hWndParent, const std::vector<LAYOUT_LINE_RESULT>& vector, unsigned padding_pixels, const RECT& rt) {
+	SCROLLINFO si = { 0 };
+	int temp;
+
+	si.cbSize = sizeof(si);
+	si.fMask = -1;
+	GetScrollInfo(hWndParent, SB_VERT, &si);
+
+	std::vector<LAYOUT_LINE_RESULT>::const_iterator it;
+
+	si.nMin = 0;
+	si.nMax = 0;
+	si.fMask = -1;
+	for (it = vector.cbegin();it != vector.cend();++it) {
+		temp = it->point.y + it->lo->get_height();
+
+		if (temp > si.nMax) si.nMax = temp;
+	}
+	si.nMax += 2 * padding_pixels;
+	si.nPage = rt.bottom;
+
+	set_loop_protect(true);
+	SetScrollInfo(hWndParent, SB_VERT, &si, TRUE);
+	set_loop_protect(false);
+
+	return si.nPos;
+
 }
 
 /*FLOAT_TYPE float_type, */
@@ -151,17 +181,19 @@ Nothing size_layout_helper(HWND hWndParent, unsigned padding_pixels, MSG msg) {
 //	_test_flag = false;
 	vector.resize(1);
 	vector.begin()->ld = &ld;
+
+	std::vector<const LayoutObject*>& vector2 = vector.begin()->vector;
 	
 	//Construct window layout objects corresponding to the child windows.
 	HWND hWnd = GetWindow(hWndParent, GW_CHILD);
 
 	if (!hWnd) return Nothing(); //Nothing to do.
 	
-	vector.begin()->vector.push_back(new WindowLayoutObject(hWnd, padding_pixels));
+	vector2.push_back(new WindowLayoutObject(hWnd, padding_pixels));
 	while (hWnd=GetWindow(hWnd, GW_HWNDNEXT)) {
-		vector.begin()->vector.push_back(new WindowLayoutObject(hWnd, padding_pixels));
+		vector2.push_back(new WindowLayoutObject(hWnd, padding_pixels));
 	}
-	std::sort(vector.begin()->vector.begin(), vector.begin()->vector.end(), window_layout_comparator);
+	std::sort(vector2.begin(), vector2.end(), window_layout_comparator);
 
 	//Get width of parent window.
 	GetClientRect(hWndParent, &rt);
@@ -170,15 +202,19 @@ Nothing size_layout_helper(HWND hWndParent, unsigned padding_pixels, MSG msg) {
 	lis.layout(rt.bottom);
 	const std::vector<LAYOUT_LINE_RESULT>& result = lis.get_result();
 
+	//Set up scroll bars.
+	int position = setup_scrollbars(hWndParent, result, padding_pixels, rt);
+
 	//Position child windows.
 	for (it = result.cbegin();it != result.cend();++it) {
+		//Only vertical scroll.
 		SetWindowPos(dynamic_cast<const WindowLayoutObject*>(it->lo)->get_window(), 0,
-			it->point.x+padding_pixels, it->point.y+padding_pixels, 0, 0,
+			it->point.x+padding_pixels, it->point.y+padding_pixels-position, 0, 0,
 			SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOSIZE);
 	}
 
 	//Free up memory.
-	for (it2 = vector.begin()->vector.begin();it2 != vector.begin()->vector.end();++it2) {
+	for (it2 = vector2.begin();it2 != vector2.end();++it2) {
 		delete *it2;
 	}
 

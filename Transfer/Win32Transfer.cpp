@@ -304,6 +304,44 @@ Transfer<int, Nothing>& set_selected_item(HWND hListControl) {
 	return ___map_impl(_f);
 }
 
+static SCROLLINFO get_scroll_info_helper(int nBar, HWND hwnd, int id, Nothing _dummy_input) {
+	SCROLLINFO si;
+
+	if (id) hwnd = GetDlgItem(hwnd, id);
+
+	si.cbSize = sizeof(si);
+	si.fMask = -1;
+	GetScrollInfo(hwnd, nBar, &si);
+
+	return si;
+}
+
+Transfer<Nothing, SCROLLINFO>& get_scroll_info(int nBar, HWND hwnd, int id) {
+	std::function<SCROLLINFO(Nothing)> _f(std::bind(get_scroll_info_helper, nBar, hwnd, id, _1));
+
+	return ___map_impl(_f);
+}
+
+static Nothing set_scroll_info_helper(int nBar, HWND hwnd, int id, SCROLLINFO si) {
+	//SCROLLINFO si;
+
+	if (id) hwnd = GetDlgItem(hwnd, id);
+
+	loop_protect_flag = true;
+	//si.cbSize = sizeof(si);
+	//si.fMask = -1;
+	SetScrollInfo(hwnd, nBar, &si, TRUE);
+	loop_protect_flag = false;
+
+	return Nothing();
+}
+
+Transfer<SCROLLINFO, Nothing>& set_scroll_info(int nBar, HWND hwnd, int id) {
+	std::function<Nothing(SCROLLINFO)> _f(std::bind(set_scroll_info_helper, nBar, hwnd, id, _1));
+
+	return ___map_impl(_f);
+}
+
 ///////////////////////////////////////
 
 static LPCTSTR w_class_name = _T("_TR_FRAME_WINDOW");
@@ -316,6 +354,8 @@ INT_PTR CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARA
 	HDC dc;
 	WINDOWPOS* wpp;
 	unsigned t_interval;
+	SCROLLINFO si;
+	UINT n;
 
 	switch (message) {
 	case WM_PAINT:
@@ -363,8 +403,37 @@ INT_PTR CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARA
 		//therefore I have the timer disabled temporarily while going through
 		//discharge_scheduled_events.
 		KillTimer(hwnd, my_timer_id);
-		t_interval = window_schedule_mp.find(hwnd)->second.discharge_scheduled_events();
+		t_interval = window_schedule_mp.find(hwnd)->second.dispatch_scheduled_events();
 		if (t_interval != -1) SetTimer(hwnd, my_timer_id, t_interval, NULL);
+		return TRUE;
+	case WM_HSCROLL:
+	case WM_VSCROLL:
+		n = (message == WM_HSCROLL ? SB_HORZ : SB_VERT);
+
+		si.cbSize = sizeof(si);
+		si.fMask = -1;
+		GetScrollInfo(hwnd, n, &si);
+
+		switch (LOWORD(wParam)) {
+		case SB_LINEDOWN:
+			si.nPos += 50;
+			break;
+		case SB_LINEUP:
+			si.nPos -= 50;
+			break;
+		case SB_PAGEDOWN:
+			si.nPos += si.nPage;
+			break;
+		case SB_PAGEUP:
+			si.nPos -= si.nPage;
+			break;
+		case SB_THUMBTRACK:
+			si.nPos = si.nTrackPos;
+			break;
+		}
+
+		SetScrollInfo(hwnd, n, &si, TRUE);
+
 		return TRUE;
 	case WM_CLOSE:
 		DestroyWindow(hwnd);
@@ -377,7 +446,7 @@ INT_PTR CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARA
 	return FALSE;
 }
 
-HWND create_frame_window(LPCTSTR title, HICON icon, HMENU menu) {
+HWND create_frame_window(LPCTSTR title, HICON icon, HMENU menu, UINT style) {
 	HINSTANCE inst;
 	//WNDCLASS wndclass;
 	DLGTEMPLATE dlgTemplate[5];
@@ -402,7 +471,7 @@ HWND create_frame_window(LPCTSTR title, HICON icon, HMENU menu) {
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, menu,
 		inst, NULL);*/
 
-	dlgTemplate[0].style = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN;
+	dlgTemplate[0].style = style;
 	dlgTemplate[0].dwExtendedStyle = 0;
 	dlgTemplate[0].cdit = 0;
 	dlgTemplate[0].x = CW_DEFAULT;
@@ -565,6 +634,12 @@ Schedule* retrieve_schedule(HWND hWnd) {
 	
 	
 	return &it->second;
+}
+
+/////////////////////////////////////
+
+void set_loop_protect(bool _loop_protect) {
+	loop_protect_flag = _loop_protect;
 }
 
 #endif
