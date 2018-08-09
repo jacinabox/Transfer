@@ -356,6 +356,7 @@ INT_PTR CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARA
 	unsigned t_interval;
 	SCROLLINFO si;
 	UINT n;
+	//RECT rt({ 0, 0, 32767, 32767 });
 
 	switch (message) {
 	case WM_PAINT:
@@ -366,10 +367,17 @@ INT_PTR CALLBACK frame_window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARA
 
 		EndPaint(hwnd, &ps);
 
+		return FALSE;
+	case WM_CTLCOLORBTN:
+	case WM_CTLCOLORDLG:
+	case WM_CTLCOLOREDIT:
+	//case WM_CTLCOLORLISTBOX:
+	case WM_CTLCOLORSCROLLBAR:
+		SetWindowLong(hwnd, 0, reinterpret_cast<LONG>(GetSysColorBrush(COLOR_3DFACE)));
 		return TRUE;
 	/*case WM_ERASEBKGND:
-		return reinterpret_cast<LRESULT>(GetStockObject(WHITE_BRUSH));*/
-		
+		return reinterpret_cast<LRESULT>(GetSysColorBrush(COLOR_3DFACE));
+		return TRUE;*/
 		
 		
 		

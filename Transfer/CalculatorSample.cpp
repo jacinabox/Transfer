@@ -147,10 +147,12 @@ static MSG helper_button(MSG msg) {
 }
 
 void calculator_sample() {
-	hwnd = create_frame_window(_T("Calculator Sample"), NULL, NULL);
+	hwnd = create_frame_window(_T("Calculator Sample"), NULL, NULL, WS_OVERLAPPEDWINDOW |
+		WS_CLIPCHILDREN |
+		WS_VSCROLL);
 	//SetWindowPos(hwnd, 0, 0, 0, 640, 480, SWP_NOMOVE);
 	CALCULATOR_STATE cs_init = { 0 };
-	RECT rect = { 0, 0, 350, 480 };
+	RECT rect = { 0, 0, 350, 280 };
 
 	cs_init.op = VK_ADD;
 

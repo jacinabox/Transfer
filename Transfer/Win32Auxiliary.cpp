@@ -206,12 +206,22 @@ Nothing size_layout_helper(HWND hWndParent, unsigned padding_pixels, MSG msg) {
 	int position = setup_scrollbars(hWndParent, result, padding_pixels, rt);
 
 	//Position child windows.
+	RedrawWindow(hWndParent, NULL, NULL, RDW_ERASE | RDW_INVALIDATE);
+	HWND hwnd;
 	for (it = result.cbegin();it != result.cend();++it) {
 		//Only vertical scroll.
-		SetWindowPos(dynamic_cast<const WindowLayoutObject*>(it->lo)->get_window(), 0,
+		hwnd = dynamic_cast<const WindowLayoutObject*>(it->lo)->get_window();
+		SetWindowPos(hwnd, 0,
 			it->point.x+padding_pixels, it->point.y+padding_pixels-position, 0, 0,
 			SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOSIZE);
+		//InvalidateRect(hwnd, NULL, TRUE);
+		//RedrawWindow(hwnd, NULL, NULL, RDW_ERASE | RDW_INVALIDATE);
+		//PostMessage(hwnd, WM_NULL, 0, 0);
 	}
+	//InvalidateRect(hWndParent, NULL, TRUE);
+	/*set_loop_protect(true);
+	SetWindowPos(hWndParent, NULL, 0, 0, rt.right, rt.bottom, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER);
+	set_loop_protect(false);*/
 
 	//Free up memory.
 	for (it2 = vector2.begin();it2 != vector2.end();++it2) {
