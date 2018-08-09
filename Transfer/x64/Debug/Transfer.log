@@ -1,22 +1,7 @@
-﻿  Win32Transfer.cpp
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(169): warning C4018: '<=': signed/unsigned mismatch
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(169): warning C4018: '<': signed/unsigned mismatch
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(376): warning C4311: 'reinterpret_cast': pointer truncation from 'HBRUSH' to 'LONG'
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(376): warning C4302: 'reinterpret_cast': truncation from 'HBRUSH' to 'LONG'
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(355): warning C4101: 'wpp': unreferenced local variable
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(485): warning C4305: '=': truncation from 'int' to 'short'
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(485): warning C4309: '=': truncation of constant value
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(486): warning C4305: '=': truncation from 'int' to 'short'
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(486): warning C4309: '=': truncation of constant value
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(487): warning C4305: '=': truncation from 'int' to 'short'
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(487): warning C4309: '=': truncation of constant value
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(488): warning C4305: '=': truncation from 'int' to 'short'
-c:\users\james\documents\transfer\transfer\win32transfer.cpp(488): warning C4309: '=': truncation of constant value
-  CalculatorSample.cpp
+﻿  CalculatorSample.cpp
 c:\users\james\documents\transfer\transfer\calculatorsample.cpp(18): warning C4244: 'initializing': conversion from 'WPARAM' to 'WORD', possible loss of data
 c:\users\james\documents\transfer\transfer\calculatorsample.cpp(34): warning C4244: 'argument': conversion from 'WORD' to 'const char', possible loss of data
 c:\users\james\documents\transfer\transfer\calculatorsample.cpp(35): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.14393.0\ucrt\string.h(335): note: see declaration of 'strncpy'
-  Generating Code...
   Transfer.vcxproj -> C:\Users\james\Documents\Transfer\x64\Debug\Transfer.exe
   Transfer.vcxproj -> C:\Users\james\Documents\Transfer\x64\Debug\Transfer.pdb (Partial PDB)

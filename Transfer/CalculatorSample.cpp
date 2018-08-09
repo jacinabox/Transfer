@@ -147,12 +147,11 @@ static MSG helper_button(MSG msg) {
 }
 
 void calculator_sample() {
-	hwnd = create_frame_window(_T("Calculator Sample"), NULL, NULL, WS_OVERLAPPEDWINDOW |
-		WS_CLIPCHILDREN |
-		WS_VSCROLL);
+	hwnd = create_frame_window(_T("Calculator Sample"), NULL, NULL);
 	//SetWindowPos(hwnd, 0, 0, 0, 640, 480, SWP_NOMOVE);
 	CALCULATOR_STATE cs_init = { 0 };
-	RECT rect = { 0, 0, 350, 280 };
+	RECT rect = { 0, 0, 350, 480 };
+	RECT rt2 = { 100, 100, 200, 120 };
 
 	cs_init.op = VK_ADD;
 
@@ -236,21 +235,23 @@ void calculator_sample() {
 				create_control2("Button", { 0, 0, 50, 50 }, control_array[2], 103, hwnd) >>
 				map(null_sink2<HWND>) |*/
 
-		map(std::function<RECT(MSG)>(std::bind(const__<RECT, MSG>, rect, _1))) >>
+			map(std::function<RECT(MSG)>(std::bind(const__<RECT, MSG>, rect, _1))) >>
 			resize_window2(hwnd) |
-		
-		size_children_according_to_layout(hwnd) |
 
-		filter_code(WM_KEYDOWN) >>
+			size_children_according_to_layout(hwnd) |
+
+			filter_code(WM_KEYDOWN) >>
 			scanning(cs_init, numeric) >>
 			map(cs_to_string) >>
 			set_window_text(hwnd, 100) >>
 			map(null_sink2<BOOL>) |
 
-		filter_code(WM_COMMAND) >>
+			filter_code(WM_COMMAND) >>
 			map(helper_button) >>
 			post_message() >>
 			map(null_sink2<BOOL>));
+
+
 
 	Nothing nothing;
 	std::function<Nothing()> f0(std::bind(identity__<Nothing>, nothing));
