@@ -11,7 +11,7 @@ public:
 	virtual ~IdentityTransfer() {
 	}
 	virtual std::auto_ptr<Transfer<X, X> > transduce(const X& input,
-		std::function<void(const X&)>& sink) const {
+		std::function<void(const X&)>& sink) {
 		sink(input);
 		return std::auto_ptr<Transfer<X, X> >(0);
 	}

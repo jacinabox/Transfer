@@ -72,7 +72,7 @@ template<class T, class U> U unsafe_retrieve_right_data(Sum<T, U> sum) {
 
 template<class I, class O> class SwitchingTransfer : public Transfer<I, O> {
 protected:
-	mutable std::auto_ptr<Transfer<I, O> > transfer;
+	std::auto_ptr<Transfer<I, O> > transfer;
 	std::function<std::auto_ptr<Transfer<I, O> >(I)> transfer_f;
 
 public:
@@ -89,7 +89,7 @@ public:
 
 	//Based on Yampa's one shot-switching combinator.
 	virtual std::auto_ptr<Transfer<I, O> > transduce(I input,
-		std::function<void(const O&)>& sink) const {
+		std::function<void(const O&)>& sink) {
 		std::auto_ptr<Transfer<I, O> > transfer2 = transfer_f(input);
 		std::auto_ptr<Transfer<I, O> > transfer3;
 

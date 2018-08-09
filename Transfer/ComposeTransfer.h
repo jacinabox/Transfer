@@ -30,8 +30,8 @@ template<class O1, class O2, class SINK_O2> typedef std::_Binder<void,
 template<class I, class O1, class O2> class ComposeTransfer : public Transfer<I, O2> {
 protected:
 	//Mutation of the transfer1 variable, is limited to taking ownership.
-	mutable std::auto_ptr<Transfer<I, O1> > transfer1;
-	mutable std::auto_ptr<Transfer<O1, O2> > transfer2;
+	std::auto_ptr<Transfer<I, O1> > transfer1;
+	std::auto_ptr<Transfer<O1, O2> > transfer2;
 
 
 public:
@@ -48,7 +48,7 @@ public:
 	}
 
 	virtual std::auto_ptr<Transfer<I, O2> > transduce(const I& input,
-		std::function<void(const O2&)>& sink) const {
+		std::function<void(const O2&)>& sink) {
 
 
 		//Set up variables to capture the components that will make up the succeeding transfer.

@@ -6,8 +6,7 @@
 
 template<class I, class O> class MergeTransfer : public Transfer<I, O> {
 protected:
-	//Mutable is for taking ownership of the references.
-	mutable std::auto_ptr<Transfer<I, O> > transfer1, transfer2;
+	std::auto_ptr<Transfer<I, O> > transfer1, transfer2;
 
 public:
 	MergeTransfer(std::auto_ptr<Transfer<I, O> >& _transfer1,
@@ -18,7 +17,7 @@ public:
 	}
 	virtual ~MergeTransfer() {
 	}
-	virtual std::auto_ptr<Transfer<I, O> > transduce(const I& input, std::function<void(const O&)>& sink) const {
+	virtual std::auto_ptr<Transfer<I, O> > transduce(const I& input, std::function<void(const O&)>& sink) {
 		//Split the input stream and feed it through both transfers.
 		std::auto_ptr<Transfer<I, O> > new_transfer1, new_transfer2;
 

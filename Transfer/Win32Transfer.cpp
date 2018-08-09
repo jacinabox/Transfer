@@ -95,7 +95,7 @@ public:
 	virtual ~Win32Transfer() {
 	}
 	virtual std::auto_ptr<Transfer<Nothing, MSG> > transduce(const Nothing& dummy_input,
-		std::function<void(const MSG&)>& sink) const {
+		std::function<void(const MSG&)>& sink) {
 
 		MSG msg, msg2;
 		std::list<CWPSTRUCT>::iterator it;

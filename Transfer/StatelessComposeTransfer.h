@@ -8,7 +8,7 @@
 template<class I, class O1, class O2> class StatelessComposeTransfer : public Transfer<I, O2> {
 protected:
 	std::auto_ptr<Transfer<I, O1> > transfer1;
-	mutable std::auto_ptr<Transfer<O1, O2> > transfer2;
+	std::auto_ptr<Transfer<O1, O2> > transfer2;
 
 public:
 
@@ -25,7 +25,7 @@ public:
 
 	virtual std::auto_ptr<Transfer<I, O2> > transduce(const I& input,
 		//A stateless version of ComposeTransfer.
-		std::function<void(const O2&)>& sink) const {
+		std::function<void(const O2&)>& sink) {
 
 
 		

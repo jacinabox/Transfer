@@ -18,7 +18,7 @@ with each output emitted. Such copy can be used to resume elsewhere in the trans
 such as in a switch.*/
 template<class I, class O> class WithRemainderTransfer : public Transfer<I, WITH_REMAINDER_OUTPUT(I, O)> {
 protected:
-	mutable std::auto_ptr<Transfer<I, O> > transfer;
+	std::auto_ptr<Transfer<I, O> > transfer;
 public:
 	WithRemainderTransfer(std::auto_ptr<Transfer<I, O> > _transfer) : transfer(_transfer) {
 		assert(transfer.get());
@@ -28,7 +28,7 @@ public:
 	virtual std::auto_ptr<Transfer<I, WITH_REMAINDER_OUTPUT(I, O)> > transduce(
 		const I& input,
 		std::function<void(const WITH_REMAINDER_OUTPUT(I, O)&)>& sink)
-		const {
+		{
 		std::function<void(const O&)> f(std::bind(with_remainder_helper<I, O>, &transfer, sink, _1));
 
 

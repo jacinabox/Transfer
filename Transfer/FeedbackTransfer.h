@@ -17,14 +17,14 @@ template<class X> void feedback_helper(std::function<void(const X&)>& sink,
 //Note: use of a feedback mechanism without care can lead to infinite loops.
 template<class X> class FeedbackTransfer : public Transfer<X, X> {
 protected:
-	mutable std::auto_ptr<Transfer<X, X> > transfer;
+	std::auto_ptr<Transfer<X, X> > transfer;
 public:
 	FeedbackTransfer(std::auto_ptr<Transfer<X, X> > _transfer) :transfer(_transfer) {
 	}
 	virtual ~FeedbackTransfer() {
 	}
 	virtual std::auto_ptr<Transfer<X, X> > transduce(const X& input, std::function<void(const X&)>& sink)
-		const {
+		{
 		std::list<X> ls(1, input);
 
 		X x;

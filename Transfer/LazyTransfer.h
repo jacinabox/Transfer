@@ -15,13 +15,13 @@ template<class I> I identity__(I x) {
 //of a pointer to the transfer itself as usual.
 template<class I, class O> class LazyTransfer : public Transfer<I, O> {
 protected:
-	mutable std::function<std::auto_ptr<Transfer<I, O> >()> tf;
+	std::function<std::auto_ptr<Transfer<I, O> >()> tf;
 public:
 	LazyTransfer(std::function<std::auto_ptr<Transfer<I, O> >()>& _tf)  :tf(_tf) {
 	}
 	virtual ~LazyTransfer() {
 	}
-	virtual std::auto_ptr<Transfer<I, O> > transduce(const I& input, std::function<void(const O&)> &sink) const {
+	virtual std::auto_ptr<Transfer<I, O> > transduce(const I& input, std::function<void(const O&)> &sink) {
 		//Construct the transfer.
 		std::auto_ptr<Transfer<I, O> > transfer(tf());
 

@@ -17,7 +17,7 @@ public:
 	}
 	virtual ~ScanningTransfer() {
 	}
-	virtual std::auto_ptr<Transfer<I, T> > transduce(const I& input, std::function<void(const T&)>& sink)const {
+	virtual std::auto_ptr<Transfer<I, T> > transduce(const I& input, std::function<void(const T&)>& sink) {
 		T itl2 = f(itl, input);
 		sink(itl2);
 		return std::auto_ptr<Transfer<I, T> > (new ScanningTransfer(itl2, f));

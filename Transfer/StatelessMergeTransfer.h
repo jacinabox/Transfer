@@ -18,7 +18,7 @@ public:
 	}
 	virtual ~StatelessMergeTransfer() {
 	}
-	virtual std::auto_ptr<Transfer<I, O> > transduce(const I& input, std::function<void(const O&)>& sink) const {
+	virtual std::auto_ptr<Transfer<I, O> > transduce(const I& input, std::function<void(const O&)>& sink) {
 	
 		transfer1->transduce(input, sink);
 		transfer2->transduce(input, sink);

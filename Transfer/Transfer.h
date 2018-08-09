@@ -25,10 +25,10 @@ public:
 	virtual ~Transfer() {
 	}
 
-	//A transfer in general cannot modify itself (because transduce is const), so it has
-	//to prepare a representation with its new state. Places where a transfer object
-	//absolutely has to modify its state internally, are indicated with the mutable
-	//specifier.
+	//Transfers are morally immutable objects, which update themselves by preparing a copy of
+	//themselves with an updated state. However, it is permitted to use such objects'
+	//internal memory as scratch space, so long as it is a prelude to the disposal and
+	//replacement of such object.
 	//
 	//Transfers may be modified to take ownership of their components, and those components
 	//set to null. If a transduce causes the caller to take ownership of some
@@ -45,7 +45,7 @@ public:
 	//a null pointer. The caller is required to handle both cases. If it is stateless,
 	//transduce must return a null pointer.
 	virtual std::auto_ptr<Transfer<I, O> > transduce(const I& input,
-		std::function<void(const O&)>& sink) const {
+		std::function<void(const O&)>& sink) {
 		return std::auto_ptr<Transfer<I, O> >(0);
 	}
 
@@ -115,7 +115,7 @@ public:
 	}
 
 	virtual std::auto_ptr<Transfer<int, int> > transduce(const int& input,
-		std::function<void(const int&)>& sink) const {
+		std::function<void(const int&)>& sink) {
 		sink( 1 + input);
 		return std::auto_ptr<Transfer<int, int> >(0);
 	}

@@ -1,7 +1,61 @@
-﻿  CalculatorSample.cpp
+﻿  stdafx.cpp
+c:\users\james\documents\transfer\transfer\filetransfer.h(37): warning C4002: too many actual parameters for macro 'map'
+  Win32Transfer.cpp
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(169): warning C4018: '<=': signed/unsigned mismatch
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(169): warning C4018: '<': signed/unsigned mismatch
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(376): warning C4311: 'reinterpret_cast': pointer truncation from 'HBRUSH' to 'LONG'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(376): warning C4302: 'reinterpret_cast': truncation from 'HBRUSH' to 'LONG'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(355): warning C4101: 'wpp': unreferenced local variable
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(485): warning C4305: '=': truncation from 'int' to 'short'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(485): warning C4309: '=': truncation of constant value
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(486): warning C4305: '=': truncation from 'int' to 'short'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(486): warning C4309: '=': truncation of constant value
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(487): warning C4305: '=': truncation from 'int' to 'short'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(487): warning C4309: '=': truncation of constant value
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(488): warning C4305: '=': truncation from 'int' to 'short'
+c:\users\james\documents\transfer\transfer\win32transfer.cpp(488): warning C4309: '=': truncation of constant value
+  Win32Observable.cpp
+  Win32Auxiliary.cpp
+  Transfer.cpp
+c:\users\james\documents\transfer\transfer\transfer.cpp(16): warning C4996: 'getch': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _getch. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.14393.0\ucrt\conio.h(452): note: see declaration of 'getch'
+c:\users\james\documents\transfer\transfer\transfer.cpp(125): warning C4533: initialization of 'pt2' is skipped by 'goto skip'
+  c:\users\james\documents\transfer\transfer\transfer.cpp(89): note: see declaration of 'pt2'
+  c:\users\james\documents\transfer\transfer\transfer.cpp(125): note: see declaration of 'skip'
+c:\users\james\documents\transfer\transfer\transfer.cpp(125): warning C4533: initialization of 'pt' is skipped by 'goto skip'
+  c:\users\james\documents\transfer\transfer\transfer.cpp(88): note: see declaration of 'pt'
+  c:\users\james\documents\transfer\transfer\transfer.cpp(125): note: see declaration of 'skip'
+c:\users\james\documents\transfer\transfer\transfer.cpp(125): warning C4533: initialization of 'rect3' is skipped by 'goto skip'
+  c:\users\james\documents\transfer\transfer\transfer.cpp(87): note: see declaration of 'rect3'
+  c:\users\james\documents\transfer\transfer\transfer.cpp(125): note: see declaration of 'skip'
+c:\users\james\documents\transfer\transfer\transfer.cpp(125): warning C4533: initialization of 'rect2' is skipped by 'goto skip'
+  c:\users\james\documents\transfer\transfer\transfer.cpp(86): note: see declaration of 'rect2'
+  c:\users\james\documents\transfer\transfer\transfer.cpp(125): note: see declaration of 'skip'
+c:\users\james\documents\transfer\transfer\transfer.cpp(125): warning C4533: initialization of 'rect' is skipped by 'goto skip'
+  c:\users\james\documents\transfer\transfer\transfer.cpp(85): note: see declaration of 'rect'
+  c:\users\james\documents\transfer\transfer\transfer.cpp(125): note: see declaration of 'skip'
+c:\users\james\documents\transfer\transfer\win32transfer.h(84): warning C4101: 'ps': unreferenced local variable
+  c:\users\james\documents\transfer\transfer\win32transfer.h(95): note: see reference to function template instantiation 'Nothing handle_wm_paint_helper2<FUNCTIONAL>(FUNCTIONAL,MSG)' being compiled
+          with
+          [
+              FUNCTIONAL=std::function<Nothing (HDC)>
+          ]
+  c:\users\james\documents\transfer\transfer\transfer.cpp(120): note: see reference to function template instantiation 'Transfer<MSG,Nothing> &handle_wm_paint2<std::function<Nothing (HDC)>>(FUNCTIONAL)' being compiled
+          with
+          [
+              FUNCTIONAL=std::function<Nothing (HDC)>
+          ]
+c:\users\james\documents\transfer\transfer\win32transfer.h(85): warning C4101: 'dc': unreferenced local variable
+  Schedule.cpp
+  LayoutEngine.cpp
+c:\users\james\documents\transfer\transfer\layoutengine.cpp(22): warning C4018: '>': signed/unsigned mismatch
+c:\users\james\documents\transfer\transfer\layoutengine.cpp(74): warning C4018: '>': signed/unsigned mismatch
+c:\users\james\documents\transfer\transfer\layoutengine.cpp(174): warning C4018: '>': signed/unsigned mismatch
+  CalculatorSample.cpp
 c:\users\james\documents\transfer\transfer\calculatorsample.cpp(18): warning C4244: 'initializing': conversion from 'WPARAM' to 'WORD', possible loss of data
 c:\users\james\documents\transfer\transfer\calculatorsample.cpp(34): warning C4244: 'argument': conversion from 'WORD' to 'const char', possible loss of data
 c:\users\james\documents\transfer\transfer\calculatorsample.cpp(35): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.14393.0\ucrt\string.h(335): note: see declaration of 'strncpy'
+  Generating Code...
   Transfer.vcxproj -> C:\Users\james\Documents\Transfer\x64\Debug\Transfer.exe
   Transfer.vcxproj -> C:\Users\james\Documents\Transfer\x64\Debug\Transfer.pdb (Partial PDB)

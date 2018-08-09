@@ -13,7 +13,7 @@ public:
 	virtual ~FilterTransfer() {
 		;
 	}
-	virtual std::auto_ptr<Transfer<I, I> > transduce(const I& input, std::function<void(const I&)>& sink) const {
+	virtual std::auto_ptr<Transfer<I, I> > transduce(const I& input, std::function<void(const I&)>& sink) {
 		
 
 		//Evaluate the predicate on the received input; use the boolean result
